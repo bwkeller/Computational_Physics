@@ -1,0 +1,156 @@
+\documentclass[11pt]{article}
+%\voffset -.5in \hoffset -.5in \textheight 9.9in \textwidth 6.4in
+\usepackage{geometry,url}
+\geometry{body={7in,9.3in}, centering}
+\pagestyle{empty}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\begin{document}
+\begin{center}
+\textbf{\Large Computational Skills in Physics}\\
+University of Memphis \\ Department of Physics \& Materials Science, College of
+    Arts and Sciences \\ PHYS 4420/6420
+\end{center}
+
+------------------------------------------------------------------------------------------------------------------------------------
+\vspace{-.1in}
+\begin{center}
+\begin{tabular}{llll}
+    \textbf{Instructor:} & \footnotesize{Dr. Benjamin Keller}  &   \textbf{Class
+    Location:}  & \footnotesize{Manning Hall 222}\\ 
+    \textbf{Email:} & \footnotesize{bkeller1@memphis.edu} &   \textbf{Class
+    Day/Time:} & \footnotesize{MWF 11:20AM-12:45PM}\\
+    \textbf{Office Hours:} & \footnotesize{By Appointment}   &  
+    \textbf{Office Location:} & \footnotesize{Manning Hall 210}  \\
+    \textbf{TA:} & \footnotesize{Zach Wyatt}   & \textbf{Credit Hours:} & 3\\
+    \textbf{Term:}  & \footnotesize{Spring 2024} &  \textbf{Discord Server:} & \footnotesize{\href{https://discord.gg/QQXpV5jY23}{https://discord.gg/QQXpV5jY23}} \\
+\end{tabular}
+\end{center}
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+\medskip\noindent {\bf IMPORTANT DATES}\\
+\begin{itemize}
+    \item \textbf{Last Day to Drop:} January 29, 2024
+    \item \textbf{Last Day to Withdraw:} April 5, 2024
+\end{itemize}
+
+\medskip\noindent {\bf PURPOSE OF THE COURSE}\\
+The course is intended for both advanced undergraduate students (4420) and
+beginning graduate students (6420). It introduces algorithmic thinking, programming in C++ and a
+selected set of computational physics methods. We will learn how to take mathematical
+and physical problems and use numerical approaches to solve them. The course will be a combination 
+of lecturing and lab (guided programming). 
+
+\medskip\noindent{\bf TEXTBOOKS}\\ 
+We'll be using two textbooks for this course, one for the C++ language and one for computational physics.
+\begin{itemize}
+    \item \textit{C++ Primer Plus} by Stephen Prata, Addison-Wesley Professional, 6th edition.
+    \begin{itemize}
+        \item \textit{Free Optional Resource}: \href{https://en.wikibooks.org/wiki/C%2B%2B_Programming/Chapters/Fundamentals}{Chapter 2 of C++ Wikibook}
+    \end{itemize}
+    \item \textit{An Introduction to Computational Physics} by Tao Pang, Cambridge University Press, 2nd edition.
+    \begin{itemize}
+        \item This textbook appears to have an e-book copy in the UofM library with an unlimited number of copies available.
+    \end{itemize}
+\end{itemize}
+
+\medskip\noindent{\bf PREREQUISITE COURSE}\\ 
+\textit{Modern Physics (PHYS 3010), Mathematical Skills in Physics (PHYS 3011)}
+
+\medskip\noindent{\bf TOPICS COVERED}\\ 
+\begin{itemize}
+    \item Programming in C++
+    \begin{itemize}
+        \item Algorithms and Hardware
+        \item Variables
+        \item Control Flow (loops and branching)
+        \item I/O: Files and the terminal
+    \end{itemize}
+    \item Computational physics methods
+    \begin{itemize}
+        \item Initial value problems in ordinary differential equations
+        \item Boundary value problems in ordinary differential equations
+        \item Partial Differential Equations
+        \item Monte Carlo Methods
+    \end{itemize}
+\end{itemize}
+
+This list of topics is tentative, and we may add or subtract contents as we go.
+
+\medskip\noindent{\bf ATTENDANCE POLICY}\\ 
+Attendance for each session of this course is required. The information covered in each class is pertinent to understanding of the entire course. 
+
+There will be three lectures per week. In every lecture, main topics will be discussed. The lectures will be a combination
+of regular lecturing, live-coding demos, and some hands-on exercises.  Some lectures will be labs, which will be a chance
+for you to write code with help from me and 
+
+\medskip\noindent{\bf HOMEWORK \& MARKING SCHEME}\\ 
+This course will only have one graded component, the homework assignments.  We will have roughly one assignment per week,
+and the final grade will be the average of your homework assignments.  I will drop the lowest homework grade from the final
+average.  Late homework will lose 10\% per day.  I will email homework assignments to the class and post them in the \textbf{\#homework}
+ channel of the Discord server.
+
+You will write your homework on the PHYS 4420 server (\textit{solid.memgalsim.space}), and email me the directory where
+you've placed it.  You are welcome to discuss solutions homeworks, but copying code is strictly forbidden.
+
+The final grades will be assigned according to the following correspondence of
+numerical ranges to letter grades:
+
+\begin{center}
+\begin{tabular}{|l l | l l|}
+    \hline
+    A+: & 97-100\% &  C+: & 77-79.9\% \\
+    A:  & 93-96.9\% & C:  & 73-76.9\% \\
+    A-: & 90-92.9\% & C-: & 70-72.9\% \\
+
+    B+: & 87-89.9\% & D+: & 67-69.9\% \\
+    B:  & 83-86.9\% & D:  & 60-66.9\% \\
+    B-: & 80-82.9\% & F:  & 0-59.9\% \\
+    \hline
+\end{tabular}
+\end{center}
+
+\medskip\noindent{\bf HONOR CODE}\\ 
+Please read the UM Honor System statement. Clear and convincing evidence of honor system violations in this class will result in the submission of formal written charges to the Honor System Coordinator. Under these circumstances I do not give warnings or ask students for explanations.
+
+According to the University of Memphis Code of Student Rights and
+Responsibilities, the term ``cheating'' includes, but is not limited to:
+
+\textit{Failing to abide by the instructions of the proctor concerning
+test-taking procedures; examples include, but are not limited to, talking,
+laughing, failure to take a seat assignment, failing to adhere to starting and
+stopping times, or other disruptive activity}
+
+\medskip\noindent{\bf SEXUAL MISCONDUCT}\\ 
+The University is committed to ensuring equality in education and eliminating
+any and all acts of sexual misconduct from its campus. Sexual misconduct
+includes sexual harassment, sexual assault, dating violence, domestic violence
+and stalking. If you or someone you know has been harassed or assaulted, you can
+make a report to the Office for Institutional Equity at oie@memphis.edu or
+901.678.2713. Please note that if you make a report to me I am required to
+report it. If you want to make a confidential report you can contact the
+University Counseling Center, 214 Wilder Tower, 901.678.2068.
+
+\medskip\noindent{\bf DISABILITY RESOURCES FOR STUDENTS}\\ 
+Any student who anticipates physical or academic barriers based on the impact of a disability is encouraged to speak with me privately. Students with disabilities should also contact Disability Resources for Students (DRS) at 110 Wilder Tower, 901-678-2880. DRS coordinates access and accommodations for students with disabilities.
+
+For additional information visit the DRS website at
+\href{https://www.memphis.edu/drs/}{memphis.edu/drs}.
+
+
+\medskip\noindent{\bf USEFUL LINKS}\\ 
+\begin{itemize}
+    \item \textbf{Society of Physics Students Discord:}
+        Hang out online with your fellow physics students \\ \href{https://discord.gg/S2NCw3yvQt}{https://discord.gg/S2NCw3yvQt}
+    \item \textbf{Counselling Center:} If you are struggling with things, help is
+        available \\
+        \href{https://www.memphis.edu/counseling/counseling/}{memphis.edu/counseling}
+    \item \textbf{CARES:} The Center for Academic Retention and Enrichment
+        Services is here to make sure you graduate! \\
+        \href{https://www.memphis.edu/cares/}{memphis.edu/cares}
+\end{itemize}
+
+
+\end{document}
