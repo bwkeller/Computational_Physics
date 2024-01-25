@@ -1,12 +1,12 @@
 #include <iostream>
 int main()
 {
-	using namespace std;
-    int carrots;
-    cout <<"How many carrots do you have?" << endl;    
-    cin >> carrots;    
-    cout <<"Here are two more." << endl;    
+    float carrots;
+    std::cout <<"How many carrots do you have?" << std::endl;    
+    //std::cin >> carrots;    
+    Carrots = 3.5;
+    std::cout <<"Here are two more." << std::endl;    
     carrots = carrots + 2;    
-    cout <<"Now you have "  << carrots << " carrots." << endl;    
+    std::cout <<"Now you have "  << carrots << " carrots." << std::endl;    
     return 0;
 }
