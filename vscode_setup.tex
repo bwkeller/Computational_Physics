@@ -1,0 +1,60 @@
+\documentclass[11pt]{article}
+%\voffset -.5in \hoffset -.5in \textheight 9.9in \textwidth 6.4in
+\usepackage{geometry,url}
+\geometry{body={7in,9.3in}, centering}
+\pagestyle{empty}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\begin{document}
+\begin{center}
+\textbf{\Large Setting up VS Code on Your Machine}\\
+\end{center}
+\section*{Why VS Code?}
+Developing code in any language requires a set of tools: a text editor to write the code in, a compiler or interpreter 
+to translate your code into machine language that the CPU can execute, and tools like debuggers and linters to help write that
+code.  
+
+Getting all these tools set up can be a pain.  It's even more of a pain if we need to get tools set up for different operating
+systems (Linux, Windows, and MacOS).  Common C compilers like clang and GCC are a huge headache to get working on Windows.
+
+To streamline all this, I've set up a Linux server at \textit{solid.memgalsim.space} with all the tools needed to build C++ programs.
+This will let me see your code for homework easily too, and help you debug as well.  To connect to this server, and edit our code that
+lives on this server, we'll use the popular editor developed by Microsoft, \textit{VS Code}.  This will let us connect to a remote 
+server, run commands from the terminal, and edit code as well.  This document should step you through installing VS Code and connecting to 
+\textit{Solid}.
+
+\section*{TL;DR Setup}
+\begin{enumerate}
+    \item Install VS Code. \href{https://code.visualstudio.com/download}{https://code.visualstudio.com/download}
+    \begin{itemize}
+        \item Install OpenSSH Client for Windows if necessary
+    \end{itemize}
+    \item Install VS Code \textbf{Remote-SSH} extension: \\ \texttt{Ctrl+P} followed by \texttt{ext install ms-vscode-remote.remote-ssh} then hit enter
+    \item Install VS Code \textbf{C/C++ Extension Pack} extension: \\ \texttt{Ctrl+P} followed by \texttt{ext install ms-vscode.cpptools-extension-pack} then hit enter
+    \item Open Command Palette (\texttt{Ctrl+Shift+P}), use the command \texttt{Remote-SSH: Connect to Host} to SSH in to \textit{username@solid.memgalsim.space}
+    \begin{itemize}
+        \item If asked, select platform ``Linux''
+    \end{itemize}
+    \item Open Folder \texttt{Ctrl+K, Ctrl+O}, select \texttt{/home/YOUR-USERNAME/PHYS4420}
+\end{enumerate}
+
+\section*{Windows Installation}
+MS Windows requires some slight extra work in order to let you connect to \textit{Solid} over SSH.  Follow the 
+instructions \href{https://learn.microsoft.com/en-gb/windows-server/administration/openssh/openssh_install_firstuse}{here}
+to get this installed.  You will need this working to be able to connect to \textit{Solid}.  The basic steps are:
+
+\begin{enumerate}
+    \item Open \textbf{Settings}, select \textbf{System}, then select \textbf{Optional Features}.
+    \item Scan the list to see if the OpenSSH is already installed. If not, at the top of the page, select \textbf{Add a feature}, then:
+    \item Find \textbf{OpenSSH Client}, then select \textbf{Install}
+\end{enumerate}
+
+\textit{You do not need to install the OpenSSH Server, just the Client!}
+
+\section*{Connecting to \textit{Solid}}
+Solid is a small Linux server that should be enough for all the code development we'll be doing in this class.  Your username
+is the same as your UofM UUID (in other words, your email address).  Your initial temporary password has been emailed to you, 
+and you can change that password as soon as you log in using the command \texttt{passwd}.
+
+\end{document}

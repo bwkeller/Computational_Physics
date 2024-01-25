@@ -1,0 +1,52 @@
+\documentclass[11pt]{article}
+%\voffset -.5in \hoffset -.5in \textheight 9.9in \textwidth 6.4in
+\usepackage{geometry,url}
+\geometry{body={7in,9.3in}, centering}
+\pagestyle{empty}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\begin{document}
+\begin{center}
+\textbf{\Large Homework 1}\\
+\textbf{Due: February 2, 2024}\\
+\end{center}
+\section*{Instructions}
+Please write your code on \texttt{solid.memgalsim.space}, and store your results
+in the \texttt{PHYS4420} directory in your home directory.  Make a new directory in there, called \texttt{HW1}, and 
+store each question as a separate \texttt{question\_NUM.cpp} file.
+\section*{Questions}
+\begin{enumerate}
+    \item Write a program that prints your name to the screen.
+    \item Write a program that subtracts 15 from 87 and displays the result, with an appropriate message.
+    \item Write a program that asks the user to enter his or her age. The program then should
+    display the age in months:
+    \begin{verbatim}
+        Enter your age: 29
+        Your age in months is 384.
+    \end{verbatim}
+    \item Write a program that has \texttt{main()} call a user-defined function that takes a Celsius
+    temperature value as an argument and then returns the equivalent Fahrenheit value.
+    The program should request the Celsius value as input from the user and display
+    the result,as shown in the following code: \\
+    \begin{verbatim}
+        Please enter a Celsius value: 20
+        20 degrees Celsius is 68 degrees Fahrenheit.
+    \end{verbatim}
+    \item Identify the syntax errors (bugs) in the following program, and then
+    write and run a corrected version to ensure you've caught them all.
+    \begin{verbatim}
+        #include <iostream>
+
+        int main() 
+        {
+            INT sum;
+            /* Compute result of sum
+            sum = 25 + 37 - 19
+            */ Display Results //
+            cout << sum << end;
+            return 0;
+        }
+    \end{verbatim}
+\end{enumerate}
+\end{document}
