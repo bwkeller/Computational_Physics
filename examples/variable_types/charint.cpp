@@ -5,9 +5,9 @@ using namespace std;
 int main()
 {
     char ch;
-    ch = 'X';
-    int CH;
-    CH =ch;
-    cout << CH << endl;
+    ch = '\a'; // 
+    unsigned short CH;
+    CH = ch;
+    cout << ch << CH << endl;
     return 0;
 }
