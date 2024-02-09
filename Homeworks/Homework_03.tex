@@ -1,0 +1,60 @@
+\documentclass[11pt]{article}
+%\voffset -.5in \hoffset -.5in \textheight 9.9in \textwidth 6.4in
+\usepackage{geometry,url}
+\geometry{body={7in,9.3in}, centering}
+\pagestyle{empty}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\begin{document}
+\begin{center}
+\textbf{\Large Homework 3}\\
+\textbf{Due: February 16, 2024}\\
+\end{center}
+\section*{Instructions}
+Please write your code on \texttt{solid.memgalsim.space}, and store your results
+in the \texttt{PHYS4420} directory in your home directory.  Make a new directory in there, called \texttt{HW3}, and 
+store each question as a separate \texttt{question\_NUM.cpp} file.
+\section*{Questions}
+\begin{enumerate}
+    \item I have placed in each of your \texttt{PHYS4420} directories an example
+        of the linked-list code we wrote together in class (the file is called
+        \texttt{linkedlist.cpp}).  There is now another new option for the \texttt{data}
+        float: -2 should delete an element.  Fill in the block of skeleton code
+        so that the program will delete the \textit{last} element in the linked
+        list when -2 is input.  Make sure that the memory used for the deleted
+        element is freed using the \texttt{delete} operator.  Don't forget to
+        check that the program still works after deleting an element.
+    \item Now modify the same skeleton code so that the \textit{first} element
+        of the linked list is removed when -2 is input.
+    \item The \texttt{Isotope} structure contains four members: a string for the
+        name of the element (e.g. Carbon-14), two integers for the number of
+        protons $Z$ and number of neutrons $N$, and a float storing the isotope
+        mass in atomic mass units.  Write a program that declares such a
+        structure, and then creates an \texttt{Isotope} variable called
+        \texttt{Li6}, and initialize this with the correct values for lithium-6
+        (you can look them up online).  Try and include as many significant
+        figures for the isotope mass as possible.  Your program should then
+        print the contents of \texttt{Li6} to the screen.
+    \item  Aneutronic fusion is a subset of possible fusion reactions that do
+        not emit neutron radiation, making them attractive possible fusion power
+        reactions (neutrons are difficult to shield against, and can cause stable
+        isotopes of aluminum and iron to become radioactive).  One of these
+        reactions transmutes a deuterium and lithium-6 nucleus into two helium-4
+        nuclei.  Write a program that initializes a \texttt{Isotope} variable
+        for each of these isotopes, verifies that the number of nucleons
+        (protons and neutrons) are conserved for this reaction, and then use the
+        difference in mass between the reactants and product to calculate how
+        much energy is released by this reaction.
+    \item Many isotopes of different elements are unstable.  Extend your
+        \texttt{Isotope} structure to include information for about the
+        half-life and daughter isotope for unstable isotopes.  Make sure to
+        document your code with comments explaining your design choices.
+        \textit{Hint: What would be the most sensible data type to use for the
+        daughter isotope?}  Then write a short program that populates an
+        \texttt{Isotope} variable with Uranium-238 and its daughter isotope,
+        Thorium-234.  The Thorium-234 variable should also include its daughter
+        isotope, Protactinium-234 (you don't need to go any deeper than this).
+
+\end{enumerate}
+\end{document}
