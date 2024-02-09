@@ -8,7 +8,7 @@ int main() {
     fact[0]=1;
     for(int i=1;i<=size;i++) {
         fact[i]=i*fact[i-1];
-        cout<<fact[i]<<endl;
+        cout << i << "! = " << fact[i] << endl;
     }
 
     // Excercise: Calculate the Fibonnaci series to n=50

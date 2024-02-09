@@ -19,14 +19,14 @@ int main() {
     for(int j=0;j<10; j++) {
         cout << j << endl;
     }
-    // cout << j << endl;
+    cout << j << endl;
     
     // ALL variables in the braces are in that scope
     for(int j=0;j<10; j++) {
         int var;
         cout << j << endl;
     }
-    // cout << var << endl;
+    cout << var << endl;
 
     // Relational operators
     // ==
@@ -38,7 +38,7 @@ int main() {
     for(int j=0;j==0; j++) 
         cout << j << endl;
 
-    // Unary increment
+    // Unary increment (pre vs. post increment)
     int x = 5;
     int y = x++;
     cout << "y: " << y << " x: " << x << endl;
