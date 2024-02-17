@@ -1,0 +1,50 @@
+\documentclass[11pt]{article}
+%\voffset -.5in \hoffset -.5in \textheight 9.9in \textwidth 6.4in
+\usepackage{geometry,url}
+\geometry{body={7in,9.3in}, centering}
+\pagestyle{empty}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\begin{document}
+\begin{center}
+\textbf{\Large Homework 4}\\
+\textbf{Due: February 23, 2024}\\
+\end{center}
+\section*{Instructions}
+Please write your code on \texttt{solid.memgalsim.space}, and store your results
+in the \texttt{PHYS4420} directory in your home directory.  Make a new directory in there, called \texttt{HW4}, and 
+store each question as a separate \texttt{question\_NUM.cpp} file.
+\section*{Questions}
+\begin{enumerate}
+    \item (10 points) Write a program that reads in two integers $n$ and $k$ from the user and then
+        calculates the Binomial coefficient of those numbers:
+        $$ {n \choose k} = \frac{n!}{k!(n-k)!}$$
+    \item (10 points) Write a program that asks the user to type in numbers (integers or
+        real).  After each entry the user types, the program should report the
+        cumulative sum of all entries to date.  The program should terminate
+        when the user enters 0.
+    \item (10 points) Write a simple menu-driven program.  The program should display a menu
+        of four Physics course numbers, each labeled with a letter.  If the user
+        responds with a letter other than one of the four valid choices, the
+        program should prompt the user to enter a valid response until the user
+        complies.  Then the program should print out the full course title.  A
+        program run could look something like this:
+        \texttt{
+            Please select one of the following courses:
+            a) PHYS4420\t b) PHYS2110
+            c) PHYS4510\t d) PHYS2010
+            > f
+            Please enter one of a,b,c, or d: q
+            Please enter one of a,b,c, or d: a
+            PHYS4420 is "Computational Skills in Physics"
+        }
+    \item (20 points) Write a function that takes two square matrices of real numbers and
+        performs a matrix multiplication on them.  Your function will need to
+        take in three arguments: two 2-dimensional array pointers (in either
+        pointer \texttt{**array} syntax or array \texttt{array[][]} syntax), and
+        an integer indicating the order of the two matrices.  Your function
+        should return a pointer to a new 2-dimensional array containing the
+        result of the matrix multiplication.
+\end{enumerate}
+\end{document}
