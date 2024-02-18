@@ -7,3 +7,5 @@
 *.synctex.gz
 syllabus.pdf
 Homework_*.pdf
+
+*.o
