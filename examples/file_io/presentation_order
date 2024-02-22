@@ -1,0 +1,5 @@
+- write_text_file.cpp
+    - With this one, go through the function examples to show the basics of writing text to a file
+- format_text.cpp
+    - With this one, go through the function examples to show various format options for printing text (mostly floats)
+    - You'll also use this one to show that writing text to a file and writing text to the screen with cout are basically the same thing
