@@ -3,6 +3,10 @@
 - format_text.cpp
     - With this one, go through the function examples to show various format options for printing text (mostly floats)
     - You'll also use this one to show that writing text to a file and writing text to the screen with cout are basically the same thing
-- write_particles.cpp 
+- write_particles.cpp
+    - Show how to write binary and text data
     - Show that it's a lot easier to write out files as a plain binary.
     - Show that the defaults for cout give you a text file that's way bigger than the binary
+- read_particles.cpp
+    - Show how to read binary and text data
+    - Show that you need a _ton_ of precision to get the text version to match the binary.
