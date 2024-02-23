@@ -30,6 +30,14 @@ void write_text(particle parts[], int n) {
     ofstream outfile; 
     outfile.open("myparticles.txt", ofstream::out); 
     outfile << n << endl;
+    // uncomment this to include more digits of precision.
+    // After you try reading in the data once, you will 
+    // see the binary and text data don't match because
+    // not enough precision is in the text file.
+    // Show that this also makes the text file even bigger.
+    
+    //outfile.precision(8);
+    //outfile.setf(ios_base::scientific);
     for(int i=0;i<n;i++) {
         outfile << parts[i].x << " " << parts[i].y << " " << parts[i].z << " " << parts[i].mass << endl;
     }
@@ -59,11 +67,10 @@ int main() {
         myparts[i].x = i*M_PI;
         myparts[i].y = i*M_PI;
         myparts[i].z = i*M_PI;
-        myparts[i].mass = M_PI;
+        myparts[i].mass = M_PI * exp(i/100-50); // Let's show off what happens with big and small numbers
     }
 
     write_binary(myparts, npart);
-
     write_text(myparts, npart);
     // After you've written these out, compare the size in bytes of
     // myparticles.txt and myparticles.dat with 
