@@ -1,0 +1,59 @@
+\documentclass[11pt]{article}
+%\voffset -.5in \hoffset -.5in \textheight 9.9in \textwidth 6.4in
+\usepackage{geometry,url}
+\geometry{body={7in,9.3in}, centering}
+\pagestyle{empty}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\begin{document}
+\begin{center}
+\textbf{\Large Homework 5}\\
+\textbf{Due: March 2, 2024}\\
+\end{center}
+\section*{Instructions}
+Please write your code on \texttt{solid.memgalsim.space}, and store your results
+in the \texttt{PHYS4420} directory in your home directory.  Make a new directory in there, called \texttt{HW5}, and 
+store each question as a separate \texttt{question\_NUM.cpp} file.
+\section*{Questions}
+\begin{enumerate}
+    \item (20 points) Write a program with the following functions:
+        \begin{itemize}
+            \item \texttt{fill\_array()}: this function takes as arguments the
+                name of an array of double values and an array size.  It prompts
+                the user to enter double values to be entered in the array.  It
+                stops taking input when the array becomes full or when the user
+                enters a non-numeric input.  It should return the actual number
+                of entries (which may be less than the array size).
+            \item \texttt{show\_array()}: this function takes the same arguments
+                as the previous function.  It should print the contents of the
+                array.
+            \item \texttt{reverse\_array()}: this function takes the same
+                arguments as the previous function.  It should reverse the order
+                of the values stored in the array.
+        \end{itemize}
+        The program should use these functions to do the following tasks in
+        order:
+        \begin{enumerate}
+            \item Fill in an array
+            \item Show the array
+            \item Reverse all elements in the array
+            \item Show the array
+            \item Reverse all elements \textit{except} the first and last
+                elements
+            \item Show the array
+        \end{enumerate}
+    \item (10 points) Take your linked list program from Homework 3 and re-write it to place
+        the operations (add an element, print the list, and your choice of
+        remove the first or last element) each within its own function.
+    \item (10 points) Now take that linked list program and split it into three source files:
+        a header containing definitions for structs and function prototypes, a
+        source file for the main program, and a source file for the three
+        functions.  Store this all in a directory called \texttt{question\_2}.
+    \item (10 points) Write a Makefile for the linked list program in the
+        \texttt{question\_2} directory.  Make sure your Makefile properly tracks
+        all dependencies and builds object files separately.  You should also
+        add a \texttt{clean} option to remove object files if the user specifies
+        \texttt{make clean}
+\end{enumerate}
+\end{document}
