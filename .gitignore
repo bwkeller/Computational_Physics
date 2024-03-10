@@ -7,6 +7,7 @@
 *.synctex.gz
 syllabus.pdf
 Homework_*.pdf
+lecture_notes.pdf
 
 *.o
 *.txt

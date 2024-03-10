@@ -1,0 +1,304 @@
+\documentclass{article}
+\usepackage{geometry}
+\usepackage{gensymb}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+
+\theoremstyle{demo}
+\newtheorem{demo}{Demo}[section]
+
+\begin{document}
+\title{Physics 4420: Computational Skills in Physics}
+\maketitle
+\section{Numerical Calculus}
+\subsection{Differentiation}
+Think back to your first course in calculus.  After finishing with limits, you
+were likely finally presented with the definition of the derivative:
+\begin{equation}
+    \frac{df}{dx}(x) = \lim_{h\to 0} \frac{f(x+h)-f(x)}{h}
+\end{equation}
+
+Pretty much the entire basis of numerical (computational) physics, at least when
+we're talking about calculus, is taking that definition and fudging
+$h\rightarrow 0$ to $h\rightarrow\textrm{small}$.  We're just going to fudge in
+a careful, controlled manner :).
+
+Let's see how this actually works, for a function we know the derivative of
+(let's say sine).
+
+\begin{demo}[diff.cpp]
+    Show that the results look OK for $h=0.1$ using \textit{plotxy} and showing
+    the plain numbers.  Let the class try the same thing with a function of
+    their choice.
+\end{demo}
+
+That looks \textit{ok}, but not great.  You can see that the values aren't
+exactly identical.  That's not surprising though, since we're \textit{supposed}
+to be taking $h\rightarrow0$.  Let's see what happens when we make it closer to
+zero.
+
+\begin{demo}[diff\_converge.cpp]
+    Show how the average error changes as we decrease $h$. No need to plot,
+    numbers are enough.  Have the class try the same thing for their function.
+\end{demo}
+
+You can see here that the error goes down roughly linearly: halve $h$, and halve
+the error.  But can we do better?
+
+\subsubsection{Central Difference}
+To do better, let's use a tool that, if it isn't already your best friend, will
+soon become it: the Taylor Series Expansion.  Recall this is defined as:
+
+\begin{equation}
+    \begin{aligned}
+        f(x) & = f(x_0) + f'(x_0)(x - x_0) + \frac{f''(x_0)}{2}(x-x_0)^2 + ... \\
+        & = \sum_{n=0}^\infty \frac{1}{n!} \frac{d^n f}{dx^n}(x_0) (x-x_0)^n
+    \end{aligned}
+\end{equation}
+
+Let's clean this up a bit to match the kind of notation that's common in
+computational physics.  Let's define:
+
+\begin{equation}
+    h = x - x_0 \equiv \Delta x
+\end{equation}
+
+$\Delta x$ will be our ``step size'', a term we will become intimately familiar
+with as we progress.  We can then define points recursively, where:
+
+\begin{equation}
+    x_{i+1} = x_i + \Delta x
+\end{equation}
+
+and $f(x_i) = f_i$. In this new notation, our Taylor series expansion looks
+like:
+\begin{equation}
+    f_{i+1} = f_i + f'_i \Delta x + \frac{f''_i}{2}\Delta x^2 + ... =
+    \sum_{n=0}^\infty \frac{1}{n!} \left.\frac{d^n f}{dx^n}\right|_i \Delta x^n\\
+\end{equation}
+
+With this, we can re-arrange to get an expression not for $f_i$, but instead
+$f'_i$:
+
+\begin{equation}
+    \begin{aligned}
+        f'_i & = \frac{f_{i+1} - f_i}{\Delta x} - \frac{f''_i}{2}\Delta x - ...\\
+    \end{aligned}
+\end{equation}
+
+Notice that the first term here is what we plugged in to our \textit{finite
+difference} scheme.  That's the formal name for this method of estimating a
+derivative, since what we've done is taken an exact expression for the
+derivative (our Taylor series), and truncated to include a finite number of
+terms.  We can also see here why the error grows linearly:  the first omitted
+term is linear in $\Delta x$.
+
+Here's a good point to introduce ``Big-O Notation''.  We're going to frequently
+find ourselves facing infinite sums that depend on different powers of something
+(frequently our step size $\Delta x$).  It's useful to be able to talk about
+these sums just in terms of their largest term.  If we've got a parameter like
+$\Delta x$ that is small, then the highest power will be the largest.  So if
+that term is proportional to $\Delta x$, then the omitted term will be
+$\mathcal{O}(\Delta x)$.  Note that this term is always positive, which makes
+sense if you think about it: we don't know what the sign of some arbitrary
+high-order derivative is, and if you think about this as an error term the
+errors are usually symmetric about zero.
+
+Thus, our finite difference can be expressed as:
+
+\begin{equation}
+    f'_i = \frac{f_{i+1} - f_i}{\Delta x} + \mathcal{O}(\Delta x)
+\end{equation}
+
+That first term is our error, and it tells us it scales linearly as $\Delta x$.
+
+It turns out we can do better than an error that's linear in $\Delta x$ if we
+are clever.  Let's look at the Taylor expansion for $f_{i+1}$ and $f_{i-1}$
+(remember this would be $f(x+\Delta x)$ and $f(x-\Delta x)$):
+
+For $f_{i+1}$, we get:
+\begin{equation}
+    f_{i+1} = f_i + f'_i \Delta x + \frac{f''_i}{2}\Delta x^2 +
+    \mathcal{O}(\Delta x^3)
+    \label{fipone}
+\end{equation}
+
+Meanwhile, for $f_{i-1}$, we get:
+\begin{equation}
+    f_{i-1} = f_i - f'_i \Delta x + \frac{f''_i}{2}\Delta x^2 +
+    \mathcal{O}(\Delta x^3)
+    \label{fimone}
+\end{equation}
+
+Because in this case we have $x-x_0 = -\Delta x$.  If you've had enough coffee
+today, you might notice something powerful about this:  the term with $f'_i$ has
+the opposite sign to the first omitted term.  So, if we subtract one term from
+the other, we get:
+\begin{equation}
+    f_{i+1} - f_{i-1} = 2\Delta x f'_i + \mathcal{O}(\Delta x^3)
+\end{equation}
+
+Re-arranging this to solve for $f'_i$ gives us:
+\begin{equation}
+    f'_i = \frac{f_{i+1} - f_{i-1}}{2\Delta x}  + \mathcal{O}(\Delta x^2)
+    \label{central_diff}
+\end{equation}
+
+Check that out! The error term here grows \textit{quadratically} with $\Delta
+x$.  This scheme is called a \textit{central difference}.  If you think about
+what this scheme is doing, it is estimating the derivative at point $x_i$ by
+using information at $x_{i+1}$ and $x_{i-1}$, while \textit{ignoring} the value
+at $x_i$!  It's shocking that this works!  Or does it?  Let's try it out.
+
+\begin{demo}[diff\_central.cpp]
+    Show that the central scheme has errors that scale with $\Delta x^2$.  Show
+    that it converges so quickly you run out of float precision, and you need
+    doubles to see further convergence.  Have the class try it on their
+    function.  
+\end{demo}
+
+\subsubsection{Five-point Scheme and Stencils}
+We can go even higher in accuracy by using this approach to cancel the
+$\mathcal{O}(\Delta x^2)$ term.  Let's fill in that term in our expression for
+$f_{i+1} - f_{i-1}$:
+
+\begin{equation}
+    f_{i+1} - f_{i-1} = 2f'_i \Delta x + 2 \frac{f^{(3)}}{6} \Delta x^3 +
+    \mathcal{O}(\Delta x^5) = 2f'_i \Delta x + \frac{f^{(3)}}{3} \Delta x^3 +
+    \mathcal{O}(\Delta x^5)
+\end{equation}
+
+The last term here is $\mathcal{O}(\Delta x^5)$ because of the same cancellation
+that got rid of our $\mathcal{O}(\Delta x^2)$ term: any even power of $\Delta x$
+will be cancelled!  So what we need now is some way to ditch the $\Delta x^3$
+term.  Perhaps the same approach as before could be useful, but this time let's
+look at $f_{i+2}$ and $f_{i-2}$.
+
+\begin{equation}
+    f_{i+2} = f_i + f'_i (2 \Delta x) + \frac{f''_i}{2}(2 \Delta x)^2 +
+    \frac{f^{(3)}}{6} (2 \Delta x)^3 + \mathcal{O}(\Delta x^5)
+\end{equation}
+
+\begin{equation}
+    f_{i-2} = f_i - f'_i (2 \Delta x) + \frac{f''_i}{2}(2 \Delta x)^2 -
+    \frac{f^{(3)}}{6} (2 \Delta x)^3 + \mathcal{O}(\Delta x^5)
+\end{equation}
+
+
+This makes sense, since $f_{i+2}$ just means we're jumping forward from $x_i$ by
+$2\Delta x$.  If we subtract these from each other, we get:
+
+\begin{equation}
+    f_{i+2} - f_{i-2} = 4f'_i \Delta x + \frac{8f^{(3)}}{3} \Delta x^3 +
+    \mathcal{O}(\Delta x^5)
+\end{equation}
+
+You can probably see exactly what we need to do:  $8(f_{i+1}-f_{i-1}) -
+(f_{i+2}-f_{i-2})$ will cancel the $\Delta x^3$ term.  If we plug that in, and
+do some re-arranging, we will get what's called the \textit{five-point scheme}:
+
+\begin{equation}
+    f'_i = \frac{1}{12\Delta x}(f_{i-2} - 8f_{i-1} + 8f_{i+1} - f_{i+2}) +
+    \mathcal{O}(\Delta x^4)
+\end{equation}
+
+\begin{demo}[diff\_fivepoint.cpp]
+    Show that the five-point scheme has errors that scale with $\Delta x^4$.  
+\end{demo}
+
+This probably has you wondering: why can't we just repeat this exercise
+ad-nauseum until we have a scheme that has errors always well below
+floating-point roundoff?  Well, there are two downsides to using higher-order 
+finite difference schemes.  The first is fairly simple: the five-point formula
+requires more operations.  For a central difference, we have 2 function calls,
+but the five-point requires 4.  If those are expensive, it might be cheaper to
+use the central scheme.  The second issue is related to where the function is
+being evaluated.  
+
+The five-point scheme is sometimes referred to as the five-point
+\textit{stencil}, because it uses five discrete positions: $x_{i-2}$ through
+$x_{i+1}$.  This means we're using four neighbouring points to calculate our
+derivative.  If we want to shrink our error term even more, this stencil will
+need to grow.  Eventually, we'll be covering a huge fraction of the function's
+domain just to calculate a derivative.  This will be very important when we
+start using these tools to solve differential equations.
+
+\subsubsection{Higher Order Derivatives and Catastrophic Cancellation}
+We can use a similar approach to calculate higher-order derivatives as well.  We
+probably don't want our high-order derivatives to depend on lower-order
+derivatives, so let's construct a second derivative scheme for $f''_i$ that
+depends only on $f$.  If we go back to equation~\ref{fipone} and
+equation~\ref{fimone}, we can see how to remove the first derivative: just add
+'em!
+
+\begin{equation}
+    f_{i+1} + f_{i-1} = 2f_i + f''_i \Delta x^2 + \mathcal{O}(\Delta x^3)
+\end{equation}
+
+So our second-derivative scheme will be:
+
+\begin{equation}
+    f''_i = \frac{f_{i-1} - 2f_{i} + f_{i+1}}{\Delta x^2} + \mathcal{O}(\Delta
+    x)
+\end{equation}
+
+Let's see if it works.
+
+\begin{demo}[second\_diff.cpp]
+    Show that the results look OK for $h=0.1$ using \textit{plotxy} and showing
+    the plain numbers.  Let the class try the same thing with a function of
+    their choice.
+\end{demo}
+
+This scheme should also give us linear convergence as $\Delta x$ shrinks. Let's
+test that just to be sure.
+\begin{demo}[second\_convergence.cpp]
+    Show that the results \textit{sort of} converge, but not very well.  Try it
+    again with doubles.  Why does it not work?
+\end{demo}
+
+What the heck is going on here?  It turns out we have been playing somewhat
+fast-and-loose: we've assumed that real numbers and floats are the same thing.
+But they aren't.  What we've seen here is a case of \textit{catastrophic
+cancellation}.  Recall that the way floats are stored gives us $\sim7$ digits of
+precision for single-precision (32 bit) and $\sim16$ digits of precision for
+doubles (64 bit).  To calculate the second derivative, we've added together two
+numbers, and subtracted a third as part of our calculation:
+\begin{equation}
+    f_{i-1} - 2f_{i} + f_{i+1}
+\end{equation}
+
+Let's look closely at what happens when we subtract two numbers that have errors
+associated with them (in our case, this is due to the finite precision that is
+unavoidable with storing real numbers as finite, floating-point numbers).  If we
+have two numbers, $\tilde\alpha$ and $\tilde\beta$, each with errors relative to their
+true values $\alpha$ and $\beta$ that are
+$\tilde\alpha = \alpha + \mathcal{O}(\epsilon \alpha)$ and  $\tilde\beta = \beta
++ \mathcal{O}(\epsilon \beta)$ respectively (where $\epsilon$ is some small
+number), then
+
+\begin{equation}
+    \tilde \alpha - \tilde \beta = \alpha + \mathcal{O}(\epsilon \alpha) - \beta +
+    \mathcal{O}(\epsilon \beta) 
+\end{equation}
+
+What happens if the true value of $\alpha$ and $\beta$ are close?  In the most
+extreme case, where $\alpha = \beta$, the fractional difference between the true
+value and the calculated value will become
+\begin{equation}
+    \frac{\tilde \alpha - \tilde \beta}{\alpha - \beta}  =
+    \frac{\mathcal{O}(\epsilon \alpha)}{0} = \infty
+\end{equation}
+
+What this warns us about is that when we try to subtract floating point numbers,
+if the difference between those numbers is small compared to the overall
+precision, we may end up growing the error in the floating point representation
+well beyond what we might expect.
+
+\begin{demo}[cancel.cpp]
+    Show how catastrophic cancellation can give a result with errors much larger
+    than 1 part in $10^7$.
+\end{demo}
+
+\subsection{Integration}
+\end{document}
