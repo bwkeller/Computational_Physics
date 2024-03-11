@@ -43,7 +43,9 @@ zero.
 \end{demo}
 
 You can see here that the error goes down roughly linearly: halve $h$, and halve
-the error.  But can we do better?
+the error.  The rate at which the error of a scheme goes down relative to the
+resolution or step size is called it's \textit{convergence rate}.
+But can we do better?
 
 \subsubsection{Central Difference}
 To do better, let's use a tool that, if it isn't already your best friend, will
@@ -301,4 +303,59 @@ well beyond what we might expect.
 \end{demo}
 
 \subsection{Integration}
+Calculating the integral of a function numerically is similar to how we started
+calculating numerical derivatives.  We'll start with the way you were likely
+first introduced to the derivative, as a Riemann sum:
+
+\begin{equation}
+    \int_a^b f(x) dx = \lim_{N \to \infty} \sum_{i=1}^N f\left(a +
+    \frac{i(b-a)}{N}\right) \frac{b-a}{N}
+\end{equation}
+
+If we once again don't let $N\rightarrow\infty$, but instead just use a ``big''
+value for N, we can approximate our integral as:
+\begin{equation}
+    \int_a^b f(x) dx \approx \sum_{i=1}^N f_i \Delta x
+\end{equation}
+
+Where $\Delta x = (b-a)/N$.  Let's see how this works in practice.
+
+\begin{demo}[int.cpp]
+    Show how well the plain old rectangle rule works.  Notice that the error
+    looks like it gets worse as $x$ increases.  Why is that?  Get the class to
+    try their own function.
+\end{demo}
+
+Just like with numerical differentiation, we can be more clever about how we do
+this in order to reduce the error and improve the convergence.  You've probably
+already seen some of these in your Calculus classes in the past.  These methods
+are called the Newton-Cotes quadrature rules. We can first try to improve the
+estimation of the each component by using the trapezoid Rule:
+\begin{equation}
+    \int_a^b f(x) dx \approx \sum_{i=1}^N (f_i + f_{i+1}) \frac{\Delta x}{2}
+\end{equation}
+
+We can improve things further by using a parabolic section (aka Simpson's rule):
+\begin{equation}
+    \int_a^b f(x) dx \approx \sum_{i=1}^N (f_i + 4f_{i+1/2}+f_{i+1}) \frac{\Delta x}{6}
+\end{equation}
+
+Let's see how these improve the estimate.
+
+\begin{demo}[quad.cpp]
+    Show how the error is much better with the trapezoid rule, and better still
+    with Simpson's rule.  Have the class verify this with their function.
+\end{demo}
+
+Calculating the convergence rate for these quadrature rules is doable
+analyticaly, but it's a bit tedious.  This is a good time to introduce the
+\textit{numerical experiment}.  Let's find out how quickly these methods
+converge empirically, by just trying a couple of different values of $N$:
+
+\begin{demo}[converge.cpp]
+    Demonstrate that the error for the rectangle rule is $\mathcal{O}(\Delta
+    x)$, $\mathcal{O}(\Delta x^2)$ for the trapezoid rule, and
+    $\mathcal{O}(\Delta x^4)$ for Simpson's rule.  Have the class verify this
+    with their function.
+\end{demo}
 \end{document}

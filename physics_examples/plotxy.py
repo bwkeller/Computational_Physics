@@ -13,11 +13,9 @@ if __name__ == "__main__":
     parser.add_argument('--labels', help='comma-separated labels')
     args = parser.parse_args()
     data = np.genfromtxt(args.filename)
+    if args.labels == None:
+        args.labels = 'Numerical,Analytic'
     for i in range(1,data.shape[1]):
-        try:
-            plt.plot(data[:,0], data[:,i], marker='.', linestyle='none', label=args.labels.split(',')[i-1])
-        except:
-            plt.plot(data[:,0], data[:,i], marker='.', linestyle='none')
-    if args.labels != None:
-        plt.legend()
+        plt.plot(data[:,0], data[:,i], marker='.', linestyle='none', label=args.labels.split(',')[i-1])
+    plt.legend()
     plt.show()
