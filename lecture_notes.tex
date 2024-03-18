@@ -358,4 +358,134 @@ converge empirically, by just trying a couple of different values of $N$:
     $\mathcal{O}(\Delta x^4)$ for Simpson's rule.  Have the class verify this
     with their function.
 \end{demo}
+
+\subsection{Root Finding}
+A common task we often find ourselves facing is trying to find the roots of a
+function, that is the value of $x$ where
+\begin{equation}
+    f(x) = 0
+\end{equation}
+
+This problem is more useful than just the straight forward ``when's the function
+equal to zero''.  We can use a root finder to find when two equations are equal,
+as well as extrema (by looking at their derivatives).  These root finding
+methods work in part by leveraging some of the numerical calculus tricks we've
+built up previously.  All of these root finding techniques require either one or
+two initial guesses, and will give us roots with a specified precision
+(something often called ``tolerance'', our tolerance for error in other words)
+
+In this section, we're going to examine a couple of different methods for
+evaluating the root of a function.  To make things fun, let's pick a function
+that doesn't have an analytic solution for the root:
+
+\begin{equation}
+    f(x) = e^x\ln(x)-x^2
+\end{equation}
+
+\subsubsection{Bisection Method}
+The simplest root finding technique is the Bisection method, which is a kind of
+``divide-and-conquer'' algorithm.  All we need for the bisection method is to
+provide a value to the left and to the right of our root (bounding it, in other
+words).  If we call these values $x_l$ and $x_r$, such that $f(x_l) < 0$ and
+$f(x_r) > 0$, we can define a simple algorithm that will get us closer and
+closer to the true root until we're within a given tolerance $\epsilon$.
+
+The basic pseudocode of this method is as follows:
+\begin{enumerate}
+    \item Define a midpoint $x_m = \frac{x_l + x_r}{2}$.
+    \item If $f(x_m) = 0 \pm \epsilon$, stop.  $x_m$ is the root.
+    \item If $f(x_m) > 0$, then set $x_r = x_m$ and go to 1.
+    \item If $f(x_m) < 0$, then set $x_l = x_m$ and go to 1.
+\end{enumerate}
+
+\begin{demo}[bisect.cpp]
+    Show that we converge to a tolerance of $10^{-6}$ in ~20 iterations or so.
+    Show that decreasing the tolerance gives less iterations, and increasing it
+    gives more.  Show that you can't go arbitrarily high.  Have the class try a
+    different function.
+\end{demo}
+\subsubsection{Newton's Method}
+The Bisection method is great, and you'll probably find yourself using it as
+your default because it is very simple, and requires only some knowledge of the
+vague area that the root might be in.  But we can make an algorithm that's a lot
+faster if we know the derivative of the function.
+
+With the derivative of a function, we can take a guess about a point
+\textit{near} the root, and then calculate the derivative at that point.  By
+linearly extrapolating to where that derivative is zero, we can iteratively
+converge on a root a bit faster than with bisection. This method is called
+Newton's Method, or the Newton-Raphson method.
+
+Newton's method relies on making an initial guess as to what the root is.  This
+guess $x_0$ may not be the true root, differing by some error $\delta x$ such
+that $f(x_0+\delta x) = 0$.  If we Taylor expand this about $x_0$ and keep only
+terms linear in $\delta x$, we get:
+\begin{equation}
+    \begin{aligned}
+        f(x_0 + \delta x) & = f(x_0) + f'(x_0)\delta x + \mathcal{O}(\delta x^2) = 0\\
+        0 &\approx f(x_0) + f'(x_0)\delta x
+    \end{aligned}
+\end{equation}
+
+If you re-arrange this, you get $\delta x \approx -f(x_0)/f'(x_0)$.  With this,
+we can build an \textit{iterative} method, replacing $x_0$ with $x_0 + \delta x$
+until we are within our tolerance.
+
+The basic pseudocode of this method is as follows:
+\begin{enumerate}
+    \item Take an initial guess $x_0$ that is near the root.
+    \item If $f(x_0) = 0 \pm \epsilon$, stop.  $x_0$ is the root.
+    \item Set $x_0 = x_0 - f(x_0)/f'(x_0)$ and go to 2.
+\end{enumerate}
+
+\begin{demo}[newton.cpp]
+    Show that we converge to a tolerance of $10^{-6}$ in ~4 iterations if we
+    guess the midpoint of $[1,2]$, and ~6 if we use the edges.  Show that you
+    can't go arbitrarily high.  Have the class try a different function.
+\end{demo}
+
+\subsubsection{Secant Method}
+Newton's method is clearly faster at converging than the bisection method, but
+it has the huge disadvantage of needing to know the derivative of a function.
+Luckily, we have constructed a whole stable of schemes for calculating these
+derivatives numerically.  We can just substitute these in to our algorithm in
+place of the analytic derivative.  That's why the \textit{Secant method} is
+sometimes called the \textit{discrete Newton method}.  
+
+In Newton's method, we iterate $k$ times over our guess, $x_k$ and the value of
+the function at this point $f_k$ and it's derivative $f'_k$.  The recursive
+definition of this relationship is:
+\begin{equation}
+    x_{k+1} = x_k - \frac{f_k}{f'_k}
+\end{equation}
+
+We can replace the exact $f'_k$ with a finite difference approximation:
+\begin{equation}
+    f'_k \approx \frac{f_k - f_{k-1}}{x_k-x_{k-1}}
+\end{equation}
+
+This gives us the definition of the Secant method's guess:
+\begin{equation}
+    x_{k+1} = x_k - f_k\frac{x_k-x_{k-1}}{f_k-f_{k-1}}
+\end{equation}
+
+The algorithm is then essentially the same, with the added caveat that we need
+to store the previous guess, and start with \textit{two} guesses.
+\begin{enumerate}
+    \item Take two initial guesses $x_0$ and $x_1$ that are near the root.
+    \item If $f(x_0) = 0 \pm \epsilon$, stop.  $x_0$ is the root.
+    \item Set $x_0 = x_0 - f(x_0)*(x_0-x_1)/(f(x_0)-f(x_1))$, and $x_1$ to be
+        equal to the previous value of $x_0$.
+    \item Go to 2.
+\end{enumerate}
+
+The Secant method doesn't converge quite as quickly as Newton's method, but it
+doesn't require the calculation of an analytic derivative.
+
+\begin{demo}[newton.cpp]
+    Show that we converge to a tolerance of $10^{-6}$ in ~7 iterations if we
+    use initial guesses of 1 and 2.  Have the class try a different function.
+\end{demo}
+
+
 \end{document}
