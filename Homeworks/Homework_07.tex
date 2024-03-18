@@ -1,0 +1,57 @@
+\documentclass[11pt]{article}
+%\voffset -.5in \hoffset -.5in \textheight 9.9in \textwidth 6.4in
+\usepackage{geometry,url}
+\geometry{body={7in,9.3in}, centering}
+\pagestyle{empty}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\begin{document}
+\begin{center}
+\textbf{\Large Homework 7}\\
+\textbf{Due: March 24, 2024}\\
+\end{center}
+\section*{Instructions}
+Please write your code on \texttt{solid.memgalsim.space}, and store your results
+in the \texttt{PHYS4420} directory in your home directory.  Make a new directory
+in there, called \texttt{HW7}, and store each question as a separate
+\texttt{question\_NUM.cpp} file.  For the questions not involving just code,
+please send me a PDF of your answers.
+\section*{Questions}
+\begin{enumerate}
+    \item (10 points) There are three finite difference rules that use two
+        points: the forward difference, which relies on $f_i$ and $f_{i+1}$, the
+        central difference that uses $f_{i-1}$ and $f_{i+1}$, and the backwards
+        difference that uses $f_{i-1}$ and $f_{i}$.  Write a program that
+        calculates the first derivative of a function using each of these
+        schemes, and then evaluate the first derivative of $f(x) = 1-x^2$ at
+        $x=0$, trying a couple different step sizes.  What do you notice as the
+        major difference between the result each method produces?  Why do you
+        think that is?
+
+    \item (20 points) Prove that the five-point stencil for calculating the
+        first derivative is accurate to $\mathcal{O}(\Delta x^4)$.  You will
+        need to use the Taylor series expansion and a bit of algebra.
+
+    \item (10 points) An even higher-order method than Simpson's rule for
+        evaluating integrals numerically is Boole's rule, which approximates an
+        integral as:
+        $$ \int_a^b f(x) dx = \frac{2}{45}\Delta x (7f_0 + 32f_1 + 12f_2 + 32f_3
+        + 7f_4)$$
+        Where $\Delta x = \frac{b-a}{4}$ and $f_0 = f(a)$. Write a program that
+        evaluates the integral of some function using this method, and
+        empirically determine it's convergence (hint: to do this without
+        changing the limits of integration, you will need to run multiple
+        ``steps'' of this scheme).
+
+    \item (10 points)  A Gaussian distribution about 0 has the functional form
+        $$ f(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{x^2}{2\sigma^2}}$$ Where
+        $\sigma$ is the standard deviation of the distribution.  The integral of
+        the Gaussian from $-\infty\rightarrow\infty$ is exactly 1.  Using the
+        rectangle rule, trapezoid rule, and Simpson's rule, evaluate what
+        fraction of the Gaussian's integral lies between $-\sigma$ and $\sigma$.
+        The true value should be exactly $0.682689492137$.  How many steps are
+        required from each method to get to an error of less than 1 part per
+        million from the true value?
+\end{enumerate}
+\end{document}
