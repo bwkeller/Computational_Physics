@@ -487,5 +487,195 @@ doesn't require the calculation of an analytic derivative.
     use initial guesses of 1 and 2.  Have the class try a different function.
 \end{demo}
 
+\section{Ordinary Differential Equations}
+One of the most common kinds of problems you'll face in your career as a
+physicist isn't simple differentiation or integration tasks, but instead a set
+of differential (or possibly integro-differential) equations.  One of the
+simplest is the ubiquitous simple harmonic oscillator.  For a SHO, we have the
+following differential equations we need to solve:
 
+\begin{equation}
+    \begin{aligned}
+        \frac{dv}{dt} &= -\frac{k}{m}x \\
+        \frac{dx}{dt} &= v \\
+    \end{aligned}
+\end{equation}
+
+For this problem, we know the solution:
+
+\begin{equation}
+    x(t) = A\cos(\omega t - \phi)
+\end{equation}
+
+Where 
+\begin{equation}
+    \begin{aligned}
+        \omega &= \sqrt{k/m} \\
+        A &= \sqrt{x_0^2 + (v_0/\omega)^2}\\
+        \phi &= \arctan{\frac{v_0}{\omega x_0}} 
+    \end{aligned}
+\end{equation}
+
+With initial conditions $v_0$ and $x_0$.  
+
+But what if we \textit{don't} know the solution?  In this chapter, we're going
+to learn general strategies for solving Ordinary (that is, involving only
+derivatives of a single variable) Differential Equations.  We'll start with the
+most common and simple type, the \textit{initial value problem}.
+
+\subsection{Initial Value Problem}
+A huge fraction of physics problems either already are first-order ODEs, or can
+be transformed \textit{into} first-order ODEs.  These equations have the general
+form of
+
+\begin{equation}
+    \frac{d\mathbf{y}}{dt} = \mathbf{g}(\mathbf{y}, t)
+\end{equation}
+
+Where $\mathbf{y} = (y_1, y_2, y_n)$ are some set of $n$ dynamical variables,
+and $\mathbf{g}$ is a generalized velocity that governs the time evolution of
+that dynamical variable.  These need not be position and velocity, they could
+just as easily be energy and power, mass and mass-flux, or angle and angular
+velocity.
+
+In an initial value problem, we solve the previous problem by evolving a system
+forward from some $\mathbf{y}_0=\mathbf{y}|_{t=0}$.  For our example of a SHO,
+we have a dynamical variable vector:
+
+\begin{equation}
+    \mathbf{y} = 
+    \begin{pmatrix}
+        y_1 \\
+        y_2 \\
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        x \\
+        v \\
+    \end{pmatrix}
+\end{equation}
+
+With a generalized velocity vector:
+\begin{equation}
+    \mathbf{g} = 
+    \begin{pmatrix}
+        y_2 \\
+        -(k/m)y_1 \\
+    \end{pmatrix}
+\end{equation}
+
+If we have values for $x_0$ and $v_0$, we can use these together with the
+equations of motion above to solve for $x(t)$ and $v(t)$.
+
+\subsection{The Euler and Picard Methods}
+There are two ways of thinking about solving an IVP.  I generally find one of
+these to be the ``intuitive'' way, and the other to be the ``rigorous'' way.
+Let's start with the intuitive one.  For an IVP involving position and velocity
+(a kinematics problem, for example), we initially know $x_0$ and $v_0$, and we
+want to know $x(t)$ (or possibly $v(t)$).  So what we want to do is ``advance''
+the values of $x$ and $v$ from $t=0\rightarrow t$.  How do we do that then?
+Let's imagine the simplest case, where $a=0$, so $v(t)=v_0=\mathrm{const}$.  In
+this case, our solution is obvious:
+
+\begin{equation}
+    x = x0 + vt
+\end{equation}
+
+But what if $v$ is not constant?  Well, hopefully on \textit{some} scale, it is
+at least smoothly varying.  If that's the case, then maybe what we can do is
+treat $v$ as constant over a short interval $\Delta t$.  Then, we can advance
+our position in small jumps:
+
+\begin{equation}
+    x_{i+1} = x_i + v_i \Delta t
+\end{equation}
+
+And we can do the same thing for the velocity:
+\begin{equation}
+    v_{i+1} = v_i + a_i \Delta t
+\end{equation}
+
+And then to get the whole thing up to time $t$, we start with $i=0$, and advance
+it to $i=t/\Delta t$, iteratively updating x and v each time.  Essentially what
+we're doing here is integrating these differential equations to transform:
+
+\begin{equation}
+    \begin{aligned}
+        \int \frac{dx}{dt} &\rightarrow x(t) \\
+        \int \frac{dv}{dt} &\rightarrow v(t) \\
+    \end{aligned}
+\end{equation}
+
+This is why these methods for solving ODEs are often called ``numerical
+integration''.  The method we've derived here is the simplest numerical
+integration scheme, \textit{Euler's method}.
+
+\begin{demo}[euler.cpp]
+    Show that Euler's method works for a SHO.  Show what happens when the step
+    size is shrunk too small.
+\end{demo}
+
+You can see that Euler's method works reasonably well, but errors can accumulate
+over time.  Shrinking the step size helps us to shrink these errors, thankfully,
+but how quickly do they shrink?  Here we're going to need to introduce the more
+``rigorous'' way of deriving Euler's method:
+
+If we take again our old friend the Taylor expansion, we can expand $y(t+\Delta
+t)$ about $t$:
+
+\begin{equation}
+    \begin{aligned}
+        y(t+\Delta t) &= y(t) + y'(t)\Delta t + \mathcal{O}(\Delta t^2)\\
+        y_{i+1} &= y_i + g_{i}\Delta t + \mathcal{O}(\Delta t^2)\\
+    \end{aligned}
+\end{equation}
+
+This gives us our Euler method, with an error estimate!  The errors should be
+$\mathcal{O}(\Delta t^2)$.  Let's check that they are:
+
+\begin{demo}[euler\_converge.cpp]
+    Show that the error is only decreasing linearly with smaller step size
+    $\Delta t$.  Why is that?  (Remember number of steps required is $n\propto
+    \Delta t^{-1}$)
+\end{demo}
+
+We've now seen that the Euler scheme's error is linear in the size of the
+timestep.  We call this convergence behaviour \textit{first-order}: it depends
+on $\Delta t^1$.  Let's construct a better algorithm, a second-order integrator.
+
+We can do a bit better than Euler by combining our approximation of a derivative
+with a better approximation of an integral.  It's formally true that:
+
+\begin{equation}
+    y_{i+1} = y_i + \int_{t_i}^{t_{i+1}} g(y,t) dt
+\end{equation}
+
+(Naturally, as what I've just written out is a re-phrasing of the Fundamental
+Theorem of Calculus).
+
+Euler's method approximates this integral as:
+\begin{equation}
+    \int_{t_i}^{t_{i+1}} g(y,t) dt \approx g_i\Delta t
+\end{equation}
+
+(In other words, the left-hand rectangle rule).  Maybe if we use a smarter
+approximation of the integral, we can get a better scheme.  Let's try the
+Trapezoid rule:
+
+\begin{equation}
+    \int_{t_i}^{t_{i+1}} g(y,t) dt \approx \frac{\Delta t}{2}(g_i + g_{i+1})
+\end{equation}
+
+This should give us smaller errors than the previous case, because the trapezoid
+rule has errors $\mathcal{O}(\Delta t^3)$, which should give a final scheme with
+error $\mathcal{O}(\Delta t^2)$.
+
+So now we have a scheme that looks like this:
+\begin{equation}
+    y_{i+1} = y_i + \frac{\Delta t}{2}(g_i+g_{i+1}) + \mathcal{O}(\Delta t^3)
+\end{equation}
+
+All well and good, except for one big question:  HOW DO WE CALCULATE SOMETHING
+THAT DEPENDS ON A FUTURE VALUE?  We need $g_{i+1}$ to calculate $y_{i+1}$, but
+$g_{i+1}$ presumably depends on $y_{i+1}$.  What do we do here?
 \end{document}
