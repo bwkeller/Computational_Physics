@@ -560,7 +560,7 @@ With a generalized velocity vector:
     \mathbf{g} = 
     \begin{pmatrix}
         y_2 \\
-        -(k/m)y_1 \\
+        -\omega^2 y_1 \\
     \end{pmatrix}
 \end{equation}
 
@@ -578,7 +578,7 @@ Let's imagine the simplest case, where $a=0$, so $v(t)=v_0=\mathrm{const}$.  In
 this case, our solution is obvious:
 
 \begin{equation}
-    x = x0 + vt
+    x = x_0 + vt
 \end{equation}
 
 But what if $v$ is not constant?  Well, hopefully on \textit{some} scale, it is
@@ -612,7 +612,7 @@ integration scheme, \textit{Euler's method}.
 
 \begin{demo}[euler.cpp]
     Show that Euler's method works for a SHO.  Show what happens when the step
-    size is shrunk too small.
+    size is made too large (unstable).
 \end{demo}
 
 You can see that Euler's method works reasonably well, but errors can accumulate
@@ -678,4 +678,151 @@ So now we have a scheme that looks like this:
 All well and good, except for one big question:  HOW DO WE CALCULATE SOMETHING
 THAT DEPENDS ON A FUTURE VALUE?  We need $g_{i+1}$ to calculate $y_{i+1}$, but
 $g_{i+1}$ presumably depends on $y_{i+1}$.  What do we do here?
+
+What we have here is called an \textit{implicit} method/problem.  The difference
+between these two methods is that an \textit{explicit} method involves finding
+some function $f(y)$ such that:
+
+\begin{equation}
+    y_{i+1} = A(y_i)
+\end{equation}
+
+Whereas an implicit method instead requires you to find a root of an equation
+such that:
+
+\begin{equation}
+    B(y_i, y_{i+1}) = 0
+\end{equation}
+
+In other words, an optimization or root-finding problem.  The root we need to
+find is:
+
+\begin{equation}
+    y_{i+1} - y_i - \frac{\Delta t}{2}(g_i+g_{i+1}) = 0
+\end{equation}
+
+Solving for the roots $y_{i+1}$ and $g_{i+1}$ give us the next value at a given
+time.  We can either use our previously derived root-finding tools for this, or
+we can use a clever method called \textit{Fixed-Point Iteration}.  The idea
+behind this is that we are looking to find a point $x_{fix}$ for some function,
+such that:
+
+\begin{equation}
+    f(x_{fix}) = x_{fix}
+\end{equation}
+
+In our case, the fixed point is $y_{i+1}$, and the function is:
+
+\begin{equation}
+    y_{i+1} = y_i + \frac{\Delta t}{2}(g(y_i)+g(y_{i+1}))
+\end{equation}
+
+We can solve for this using one of many methods, but the easiest is almost
+certainly \textit{Picard iteration}.  With this, we calculate new values for the
+vector $y_{i+1}$ over and over again, eventually stopping after a fixed number
+of iterations (bad! lazy!) or once a certain error tolerance has been reached.
+This is defined simply as:
+\begin{equation}
+    \begin{aligned}
+        y^{0}_{i+1} &= y_i \\
+        y^{(k+1)}_{i+1} &= y_i + \frac{\Delta t}{2}(g(y_i)+g(y^{(k)}_{i+1}))
+    \end{aligned}
+\end{equation}
+
+Let's see how this works with a very simple ODE:
+
+\begin{equation}
+    \frac{dy}{dt} = g = y
+\end{equation}
+
+This gives us:
+
+\begin{equation}
+    y_{i+1} = y_i + \frac{\Delta t}{2}(y_i+y_{i+1})
+\end{equation}
+
+With an initial value of $y(0) = 1$, the solution for our ODE is
+
+\begin{equation}
+    y(t) = e^t
+\end{equation}
+
+So $y(0.1)$ should be exactly $1.1051709$.  Let's see if we can Picard iterate
+towards this value.  We will start from $t=0$ and go to $t=0.1$ in one big step
+of $\Delta t = 0.1$.  Our initial condition will therefore be $y_i=1$, and our
+initial guess will be $y^{(0)}_{i+1}=1$.  Let's see if it works.
+
+\begin{equation}
+    \begin{aligned}
+        y^{(k+1)}_{i+1} &= y_i + \frac{\Delta t}{2}(g(y_i)+g(y^{(k)}_{i+1})) \\
+        y^{(1)}_{i+1} &= 1 + 0.05(1+1) &= 1.01 \\
+        y^{(2)}_{i+1} &= 1 + 0.05(1+1.01) &= 1.1005 \\
+        y^{(3)}_{i+1} &= 1 + 0.05(1+1.1005) &= 1.105025 \\
+        y^{(4)}_{i+1} &= 1 + 0.05(1+1.105025) &= 1.1052625 \\
+        y^{(5)}_{i+1} &= 1 + 0.05(1+1.1052625) &= 1.10526313 \\
+        y^{(6)}_{i+1} &= 1 + 0.05(1+1.10526313) &= 1.10526315 \\
+    \end{aligned}
+\end{equation}
+
+You can see we've converged, but not exactly to the true value.  Remember that
+we're dealing with a truncated result here: there is a non-zero error term that
+just iterating away at won't help.  Let's see how well this Picard method works
+
+\begin{demo}[picard.cpp]
+    Show how much more stable the picard method is than the Euler method.  Try
+    dropping the step sizes and see what happens.
+\end{demo}
+
+You've noticed this thing is \textit{way} more stable than Euler's method with
+large-ish step sizes?  That's one of the huge advantages of implicit methods:
+they tend to either fail utterly (like if the iteration doesn't converge) or
+give a stable result.  You don't have to worry quite as much as with an
+explicit method if you are going to get a result that's wrong because of a
+numerical instability that's grown.  Let's see how the convergence looks.  Based
+on the truncation error of $\mathcal{O}(\Delta t^3)$, the error should converge
+as $\mathcal{O}(\Delta t^2)$: the method is \textit{second-order}.
+
+\begin{demo}[picard\_converge.cpp]
+    Show that the picard method is second order, but note that it is slow.  It
+    takes a long time to do all those extra iterations (in our lazy case, 10
+    times as much time).
+\end{demo}
+
+So we've seen now a semi-implicit method (since we're only doing implicit
+calculations for intermediate steps, this is also called an IMEX or
+IMplicit-EXplicit method).  Unfortuantely, all that extra iterating is
+expensive.  Maybe there's a way to skip that iteration?
+
+\subsection{Predictor-Corrector Methods}
+It turns out, yes indeed there is a way to skip that iteration!  The trick is to
+use a cheap, explicit first guess (like, say from the Euler method).  This
+``prediction'' is then corrected using an implicit method, like the single
+Picard step we saw previously.  We will first produce a
+weak prediction for $\tilde y_{i+1}$:
+
+\begin{equation}
+    \tilde y_{i+1} = y_i + g_i\Delta t
+\end{equation}
+
+Which we then correct to a better estimate of $y_{i+1}$:
+
+\begin{equation}
+    y_{i+1} = y_i + \frac{\Delta t}{2}(g_i+\tilde g_{i+1})
+\end{equation}
+
+This is actually just one of many classes of ODE solvers called
+``predictor-corrector'' methods.  Let's see how well it works. 
+\begin{demo}[pred\_corr.cpp]
+    Show that the predictor corrector is also quite stable.  Walk through the
+    code.
+\end{demo}
+
+Predictor-Corrector methods can be of any order, as long as you
+include enough terms.  The one we have here is second-order.  Let's verify that,
+and also check that it's faster than Picard Iteration.
+
+\begin{demo}[pc\_converge.cpp]
+    Show that this is also second order, and that it's much faster than Picard.
+\end{demo}
+
 \end{document}
