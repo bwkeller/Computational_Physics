@@ -1,15 +1,22 @@
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include <cmath>
 
 using namespace std;
 
-double euler(double omega, double x, double v, double tf, double dt) {
-    double dv;
+double pc(double omega, double x, double v, double tf, double dt) {
+    double x_pred, v_pred;
+    double x_old;
     for(double t=0;t<=tf;t+=dt) {
-        dv = -omega*x*dt;
-        x += v*dt;
-        v += dv;
+        // Predict values with Euler's method
+        x_pred = x + dt*v;
+        v_pred = v - dt*omega*omega*x;
+
+        // Correct the predictions using the trapezoid rule
+        x_old = x;
+        x = x + 0.5*dt*(v + v_pred);
+        v = v - 0.5*dt*omega*omega*(x_old + x_pred);
     }
     return x;
 }
@@ -30,7 +37,7 @@ int main() {
 
     double err;
     for(double dt=0.1;dt>5e-6;dt/=10) {
-        err = abs(analytic(omega, x0, v0, tf)-euler(omega*omega, x0, v0, tf, dt));
+        err = abs(analytic(omega, x0, v0, tf)-pc(omega*omega, x0, v0, tf, dt));
         cout << std::scientific << "dt: " << dt << " error: " << err << endl;
     }
     return 0;

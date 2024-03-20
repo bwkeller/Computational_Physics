@@ -19,7 +19,6 @@ double picard(double omega, double x, double v, double tf, double dt) {
         for(int k=0;k<10;k++) {
             x_next = x + (dt/2)*(v + v_next);
             v_next = v - (dt/2)*omega*omega*(x + x_next);
-            cout << t << " " << x_next << " " << analytic(omega, x0, v0, t+dt) << endl;
         }
         x = x_next;
         v = v_next;
@@ -32,13 +31,12 @@ int main() {
     double omega = 1;
     // initial conditions
     double x0 = 1; 
-    double v0 = 0;
-    double tf = 20*M_PI;
+    double v0 = 10;
+    double tf = 100;
 
     double err;
-    for(double dt=0.1;dt>1e-6;dt/=10) {
+    for(double dt=0.1;dt>5e-6;dt/=10) {
         err = abs(analytic(omega, x0, v0, tf)-picard(omega*omega, x0, v0, tf, dt));
-        return 0;
         cout << std::scientific << "dt: " << dt << " error: " << err << endl;
     }
     return 0;
