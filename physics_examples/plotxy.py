@@ -11,11 +11,16 @@ if __name__ == "__main__":
             )
     parser.add_argument('filename')
     parser.add_argument('--labels', help='comma-separated labels')
+    parser.add_argument('--lines', help='Draw lines', action=argparse.BooleanOptionalAction)
     args = parser.parse_args()
     data = np.genfromtxt(args.filename)
+    if args.lines:
+        ls = '-'
+    else:
+        ls='none'
     if args.labels == None:
         args.labels = 'Numerical,Analytic'
     for i in range(1,data.shape[1]):
-        plt.plot(data[:,0], data[:,i], marker='.', linestyle='none', label=args.labels.split(',')[i-1])
+        plt.plot(data[:,0], data[:,i], marker='.', linestyle=ls, label=args.labels.split(',')[i-1])
     plt.legend()
     plt.show()

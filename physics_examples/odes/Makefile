@@ -1,4 +1,4 @@
-all: euler.out euler_converge.out picard.out picard_converge.out pred_corr.out pc_converge.out rk4.out rk4_converge.out
+all: euler.out euler_converge.out picard.out picard_converge.out pred_corr.out pc_converge.out rk4.out rk4_converge.out rk2.out rk2_converge.out
 	echo "Building all examples"
 
 euler.out: euler.cpp
@@ -24,3 +24,9 @@ rk4.out: rk4.cpp
 
 rk4_converge.out: rk4_converge.cpp
 	g++ -o rk4_converge.out rk4_converge.cpp
+
+rk2.out: rk2.cpp
+	g++ -o rk2.out rk2.cpp
+
+rk2_converge.out: rk2_converge.cpp
+	g++ -o rk2_converge.out rk2_converge.cpp
