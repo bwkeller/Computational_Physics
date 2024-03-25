@@ -1,0 +1,73 @@
+\documentclass[11pt]{article}
+%\voffset -.5in \hoffset -.5in \textheight 9.9in \textwidth 6.4in
+\usepackage{geometry,url}
+\geometry{body={7in,9.3in}, centering}
+\pagestyle{empty}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\begin{document}
+\begin{center}
+\textbf{\Large Homework 8}\\
+\textbf{Due: March 30, 2024}\\
+\end{center}
+\section*{Instructions}
+Please write your code on \texttt{solid.memgalsim.space}, and store your results
+in the \texttt{PHYS4420} directory in your home directory.  Make a new directory
+in there, called \texttt{HW8}, and store each question as a separate
+\texttt{question\_NUM.cpp} file.  For the questions not involving just code,
+please send me a PDF of your answers.
+
+This homework relies on ODE solvers that we worked on in class.  If you need to
+reference the example code, it can be found here: \\
+\url{https://github.com/bwkeller/Computational_Physics/blob/main/physics_examples/}
+
+\section*{Questions}
+\begin{enumerate}
+    \item (10 points) The code for the bisection method example I showed in
+        class assumes that the function is monotonically increasing as $x$
+        increases.  Naturally, plenty of functions decrease as
+        $x\rightarrow\infty$. Modify this code to be able to handle both
+        functions that increase with increasing $x$ as well as ones that
+        decrease.  Demonstrate that it works by finding the roots for two
+        equations:
+        $$ f(x) = \sqrt{x}-e^x\ln(x)$$
+        and
+        $$ f(x) = e^x\ln(x) + e^{0.5x}$$
+    \item (30 points)  Implicit methods like Picard Iteration often work better
+        than explicit ones for ``stiff'' differential equations, a vague and
+        ill-defined group of problems that are best thought of as just
+        ``problems often produce unstable numerical solutions''.  A simple
+        example of a stiff ODE would be
+        $$ x' = -18x $$
+        With initial conditions $x(0) = 1$.  This has the solution
+        $$ x(t) = e^{-18t} $$
+        This huge power of $t$ means that it's very easy for small errors to
+        balloon into either oscillations or just plain runaways.  For this
+        problem: 
+        \begin{enumerate}
+            \item Show that Euler's method with a timestep of $\Delta t=0.1$
+                oscillates about the true solution when integrating from $t=0$
+                to $t=1$.
+            \item Show that Picard iteration with a timestep of $\Delta t=0.1$,
+                using 10 iterations per timestep, does not oscillate when
+                integrating from $t=0$ to $t=1$.
+            \item Determine how roughly (to within a factor of 10) how small a
+                timestep $\Delta t$ is required to have the final relative error
+                $|x_{numerical}(1)-x(1)|/x(1) < 0.1$ for Euler's method and for
+                Picard Iteration.
+        \end{enumerate}
+    \item (10 points) Picard Iteration clearly is useful in some cases, like the
+        stiff equation above.  However, working with a fixed number of
+        iterations isn't ideal.  In some cases, we will iterate too long,
+        wasting precious time.  In others, we won't iterate long enough, and get
+        results that are incorrect.  Modify the Picard iteration code you used
+        in the previous question to instead iterate until the solution is
+        converged to a tolerance of $\epsilon=10^{-6}$ (in other words, that the last
+        iteration changed the result by less than $\epsilon$).  Show that for a
+        timestep of $\Delta t=0.01$, this results in far fewer than 10
+        iterations per step.  Show that for a timestep of $\Delta t=0.1$, it
+        results in far more iterations, but produces a better solution closer to
+        the analytic one.
+\end{enumerate}
+\end{document}
