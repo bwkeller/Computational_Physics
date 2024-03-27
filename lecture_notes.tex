@@ -1027,4 +1027,96 @@ It should also be FOURTH order, let's check that it is:
 \begin{demo}[rk4\_converge.cpp]
     Show that the 4nd order RK method is fourth order.
 \end{demo}
+
+\subsection{Symplectic Integrators and Energy Conservation}
+So far the only criterion we've considered for whether a method for solving an
+ODE is ``good'' or not is the cost per timestep $\Delta t$ as well as the
+convergence: how quickly the error fell as $\Delta t$ is decreased.  However,
+we saw with our example of Euler's method that the total energy actually was
+increasing monotonically, which is way worse than just a random error, it's a
+systematic one in a property we care about (total energy).  
+
+It turns out that even our good friend RK4 suffers from energy non-conservation.
+In our simple harmonic oscillator, the total energy (Hamiltonian) of the system
+is:
+
+\begin{equation}
+    H = T + V = \frac{1}{2}(p^2 + q^2)
+    \label{SHO_Hamiltonian}
+\end{equation}
+
+If we choose units $m=\omega=1$, then $x=q$ and $v=p$, which will simplify some
+of our derivations.  Let's see how well the energy is conserved with a SHO and
+RK4.
+
+\begin{demo}[rk4\_energy.cpp]
+    Show that the total energy of an RK4-integrated SHO decreases systematically.
+\end{demo}
+
+That's not good!  If we are dealing with a problem like an SHO, and we have many
+periods/dynamical times, even RK4 is going to become a problem.  This is
+extremely relevant in astrophysical problems, where things like planets can
+make billions of orbits around a star during their lifetime.  We can see how bad
+this can turn out by looking at an object in orbit around a point mass.  We'll
+keep everything simple, and use two-dimensions.  The equations of motion for
+this problem will be:
+
+\begin{equation}
+    \frac{d^2 \vec r}{dt} = -\frac{1}{r^2} \hat r
+\end{equation}
+
+If we start with a particle orbiting at $|r|=1$ with $|v|=1$ and $\vec r \cdot
+\vec v = 0$, the particle should stay on an orbit with $r=1$ forever.  Let's see
+what happens with the best and worst case integrators we've seen so far.
+
+\begin{demo}[orbits.cpp]
+    Show that both Euler's method and RK4 do very bad at keeping a planet on
+    its orbit.
+\end{demo}
+
+Are we just screwed?  Is there any way to fix this problem?  To find out, we
+should first try and understand the source of the problem.  We might think that
+it's just the truncation error, but if that was the case than why is it
+systematic? Let's see if we can find the source for the simpler case, our
+Euler's method.
+
+Recall Hamilton's equations:
+
+\begin{equation}
+    \frac{dq}{dt} = \frac{\partial H}{\partial p} \qquad \frac{dp}{dt} =
+    -\frac{\partial H}{\partial q}
+\end{equation}
+
+So for the SHO, our equations of motion become the familiar ones we've seen
+since Physics I:
+\begin{equation}
+    q' = p \qquad p' = - q
+\end{equation}
+
+So our Euler update step for $p$ and $q$ will be: 
+
+\begin{equation}
+    \begin{aligned}
+        q_{n+1} & = q_n + \Delta t p_n \\
+        p_{n+1} & = p_n - \Delta t q_n \\
+    \end{aligned}
+\end{equation}
+
+Let's see what happens when we calculate $H_{n+1}$:
+\begin{equation}
+    \begin{aligned}
+        H_{n+1} & = \frac{1}{2}(p_{n+1}^2 + q_{n+1}^2) =
+        \frac{1}{2}\left[\left(p_n -
+        \Delta t q_n\right)^2 + \left(q_n + \Delta t p_n\right)^2 \right]\\
+        &= \frac{1}{2}\left[(p_n^2 -2\Delta t p_n q_n + \Delta t^2 q_n^2) +
+        (q_n^2 + 2\Delta p_n q_n + \Delta t^2 p_n^2) \right] \\
+        &= \frac{1}{2}(1+\Delta t^2)(p_n^2 + q_n^2) \neq H_n
+    \end{aligned}
+\end{equation}
+
+Well there we have it, the energy's not conserved because our update scheme
+explicitly does not conserve it!  The energy errors go down as we decrease the
+timestep, but they are monotonically increasing.  Euler's method, for a SHO,
+will always have the energy increase.
+
 \end{document}
