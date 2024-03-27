@@ -1014,6 +1014,17 @@ high order $\mathcal{O}(\Delta t^4)$ RK method that is often referred to as
 \end{array}
 \]
 
+This ends up looking like:
+\begin{equation}
+    \begin{aligned}
+        k1 &= g(t_n, y_n) \\
+        k2 &= g(t_n+0.5\Delta t, y_n + 0.5\Delta t k_1) \\
+        k3 &= g(t_n+0.5\Delta t, y_n + 0.5\Delta t k_2) \\
+        k4 &= g(t_n+\Delta t, y_n + \Delta t k_3) \\
+        y_{n+1} &= y_n + \frac{\Delta t}{6}(k_1 + 2k_2 + 2k_3 + k_4)
+    \end{aligned}
+\end{equation}
+
 In general, if you are faced with an ODE that needs solving, the RK4 method
 should be the first tool you pull out.  It may not be the best choice for every
 problem, but it is generally the most likely to give you a good answer on your
@@ -1097,8 +1108,8 @@ So our Euler update step for $p$ and $q$ will be:
 
 \begin{equation}
     \begin{aligned}
-        q_{n+1} & = q_n + \Delta t p_n \\
         p_{n+1} & = p_n - \Delta t q_n \\
+        q_{n+1} & = q_n + \Delta t p_n \\
     \end{aligned}
 \end{equation}
 
@@ -1117,6 +1128,167 @@ Let's see what happens when we calculate $H_{n+1}$:
 Well there we have it, the energy's not conserved because our update scheme
 explicitly does not conserve it!  The energy errors go down as we decrease the
 timestep, but they are monotonically increasing.  Euler's method, for a SHO,
-will always have the energy increase.
+will always have the energy increase.  If we did the same excercise with RK4 (we
+can, but it's a bit tedious), we would also find that $H_{n+1} \neq H_n$.
 
+So, we know that RK4 and Euler don't work.  Can we figure out a way to build a
+method that does work?  Absolutely!  It turns out the simplest example we can
+come up with is almost identical to Euler's method.  It looks like this:
+
+\begin{equation}
+    \begin{aligned}
+        p_{n+1} & = p_n - \Delta t q_n \\
+        q_{n+1} & = q_n + \Delta t p_{n+1} \\
+    \end{aligned}
+\end{equation}
+
+You might think that this is an implicit method, but it's not quite, since we
+calculate $p_{n+1}$ using only information from the $t_n$ step:  
+
+\begin{equation}
+    \begin{aligned}
+        p_{n+1} & = p_n - \Delta t q_n \\
+        q_{n+1} & = q_n + \Delta t p_n - \Delta t^2 q_n = \Delta t p_n +
+        (1-\Delta t^2) q_n\\
+    \end{aligned}
+\end{equation}
+
+This method is called the Euler-Cromer or Semi-Implicit Euler Method. Let's
+check if this is indeed energy conserving:
+
+\begin{equation}
+    \begin{aligned}
+        H_{n+1} & = \frac{1}{2}(p_{n+1}^2 + q_{n+1}^2) =
+        \frac{1}{2}\left[(p_n - \Delta t q_n)^2 + (\Delta t p_n + (1-\Delta
+        t^2)q_n)^2\right]\\
+        &= \frac{1}{2}\left[(p_n^2 - 2\Delta t p_n q_n + \Delta t^2 q_n^2) +
+        (\Delta t^2 p_n^2 + 2\Delta t(1-\Delta t^2)p_nq_n + (1-\Delta t^2)^2
+        q_n^2)\right]\\
+        &= \frac{1}{2}\left[p_n^2 + q_n^2 + \Delta t^2(p_n^2-q_n^2) + \Delta t^4
+        - 2\Delta t^3 p_n q_n\right]
+    \end{aligned}
+\end{equation}
+
+Well what the heck?  Why did I just waste my time writing that if it doesn't
+work?  Did I make a mistake?  Let's check it empirically.
+
+\begin{demo}[ec\_energy.cpp]
+   Show that the energy error is reasonably big, but it doesn't grow over time. 
+\end{demo}
+
+Well well well, it looks like the energy isn't \textit{conserved} per-se, but
+the errors are bounded: the energy neither grows nor shrinks.  It turns out the
+thing we're looking for is not that the \textit{true} Hamiltonian is
+unchanged step-to-step, but that a \textit{numerical} Hamiltonian is conserved.
+This numerical Hamiltonian is essentially just:
+
+\begin{equation}
+    H_{numerical} = H_{true} + H_{error}
+\end{equation}
+
+As long as that is conserved, the error will always be bounded.  A more formal
+way of looking at this is using Liouville's Theorem, which states that energy
+conserving systems have constant phase-space volume.  Therefore, a
+transformation matrix $\mathbf{M}$:
+
+\begin{equation}
+    \begin{pmatrix}
+        q_{n+1} \\
+        p_{n+1} 
+    \end{pmatrix} = \mathbf{M}
+    \begin{pmatrix}
+        q_{n} \\
+        p_{n} 
+    \end{pmatrix} 
+\end{equation}
+
+will conserve energy (within the bounds of some error) if and only if
+$\mathbf{M}$ is \textit{symplectic}, or if 
+\begin{equation}
+    \det\mathbf{M} = 1.  
+\end{equation}
+
+We could dive very deep into this if this course was a course on differential
+geometry or a graduate mechanics class, but for now we'll leave the definition
+there.  If we look at the two transformation matrices for Euler and
+Euler-Cromer, we have:
+
+\begin{equation}
+    \det \mathbf{M}_{euler} = 
+    \begin{pmatrix}
+        1 & \Delta t \\
+        -\Delta t & 1 \\
+    \end{pmatrix} = 1 + \Delta t^2
+\end{equation}
+
+Menwhile,
+\begin{equation}
+    \det \mathbf{M}_{euler-cromer} = 
+    \begin{pmatrix}
+        1 - \Delta t^2 & \Delta t \\
+        -\Delta t & 1 \\
+    \end{pmatrix} = 1 
+\end{equation}
+
+This means that phase-space volume is conserved, and therefore the numerical
+Hamiltonian is conserved.  It turns out for the Euler-Cromer method, the
+numerical Hamiltonian is:
+\begin{equation}
+    H_{numerical} = \frac{1}{2}(p^2 + q^2) - \frac{\Delta t}{2}pq
+\end{equation}
+
+If we look again at the energy error, but this time look at $H_{numerical}$
+instead of $H_{true}$, we can see this is perfectly conserved.  Deriving this
+generally is somewhat involved, and not always possible.
+
+\begin{demo}[ec\_energy.cpp]
+   Change what's printed out to show the numerical Hamiltonian instead.
+\end{demo}
+
+Euler-Cromer works as a symplectic integrator, but it's only first.
+There's a second-order method that's commonly used that has a second advantage
+beyond just being higher order.  This method, called by many names
+(\textit{leapfrog, Verlet, Kick-Drift-Kick}) is not only symplectic, it has
+perfect time-reversal symmetry.  This helps it further beat down the errors in
+energy, beyond just having the error not grow.  Leapfrog is basically the
+standard time integrator for most astrophysical problems that don't involve
+planets, as well as molecular dynamics simulations of individual atoms/molecules
+interacting.
+
+The name Kick-Drift-Kick is actually a pretty good explanation of Leapfrog.  We
+first ``kick'' the thing, updating it's velocity.  We then let it drift
+(updating it's position), and finally give it another kick.  The two kicks are
+done on half-steps, and the drift on a full timestep.  The algorithm looks like
+this (not just for the SHO, but in general):
+
+\begin{equation}
+    \begin{aligned}
+        v_{n+1/2} &= v_n + \frac{\Delta t}{2} a(x_n) \\
+        x_{n+1} &= x_n + \Delta t v_{n+1/2}
+        v_{n+1/2} &= v_{n+1/2} + \frac{\Delta t}{2} a(x_{n+1}) \\
+    \end{aligned}
+\end{equation}
+
+This method gives much smaller errors (it is second order after all!).
+\begin{demo}[kdk\_energy.cpp]
+    Show that the energy error is smaller than with Euler-Cromer.
+\end{demo}
+
+We can also run this in reverse to perfectly reproduce our initial conditions!
+\begin{demo}[time\_reverse.cpp]
+    Show that time reversal works with Leapfrog.
+\end{demo}
+
+Energy conservation isn't something you need to worry about for every ODE you
+might integrate.  For many ODEs, there is no concept of energy. There are plenty
+of ODEs you might encounter that aren't describing physics problems.  ODEs
+describing traffic flow, the populations of different species, or the prices of
+a given commodity all can be solved numerically, but have no concept of energy
+in the system. Some physics problems also aren't derived from Hamilton's
+equations, and so don't really care about energy conservation.  Even in cases
+where we \textit{do} care about energy conservation, a high-order method like
+RK4 might not be so bad as long as the dynamical time is long compared to the
+timescales we integrate over.  Choosing the correct method is in part a question
+of knowing \textit{what about the system you actually care about}.  There is no
+silver bullet in numerical integration.
 \end{document}
