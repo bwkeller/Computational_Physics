@@ -1,4 +1,4 @@
-all: euler.out euler_converge.out picard.out picard_converge.out pred_corr.out pc_converge.out rk4.out rk4_converge.out rk2.out rk2_converge.out orbits.out rk4_energy.out ec_energy.out kdk_energy.out time_reverse.out shooting.out boundary.out
+all: euler.out euler_converge.out picard.out picard_converge.out pred_corr.out pc_converge.out rk4.out rk4_converge.out rk2.out rk2_converge.out orbits.out rk4_energy.out ec_energy.out kdk_energy.out time_reverse.out shooting.out boundary.out shooting_bisect.out
 	echo "Building all examples"
 
 euler.out: euler.cpp
@@ -51,3 +51,6 @@ shooting.out: shooting.cpp
 
 boundary.out: boundary.cpp
 	g++ -O3 -o boundary.out boundary.cpp
+
+shooting_bisect.out: shooting_bisect.cpp
+	g++ -O3 -o shooting_bisect.out shooting_bisect.cpp

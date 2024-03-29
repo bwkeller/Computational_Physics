@@ -55,6 +55,7 @@ int main(int argc, const char* argv[]) {
         rk4_step(&y, &z, dx);
         outfile << x << " " << analytic(x) << " " << y << endl;
     }
+    cout << "True y_right: " << y_right << " Integration guess y_right: " << y << endl;
     outfile.close();
     return 0;
 }

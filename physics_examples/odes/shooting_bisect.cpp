@@ -50,17 +50,27 @@ double rk4_integrate(double zguess, bvp bounds) {
     return y-bounds.y_right;
 }
 
-double secant(double x0, double x1, double (*f)(double, bvp), bvp bounds, double tol) {
-    int count=0;
-    double x_old;
-    while(abs(f(x0, bounds)) > tol) {
-        x_old = x0;
-        x0 -= f(x0, bounds)*(x0-x1)/(f(x0, bounds)-f(x1, bounds));
-        x1 = x_old;
+double bisect(double xl, double xr, double (*f)(double, bvp), bvp bounds, double tol) {
+    double xm = 0.5*(xl+xr);
+    double fl = f(xl, bounds);
+    double fm = f(xm, bounds);
+    double fr = f(xr, bounds);
+    int count = 0;
+    while(abs(fm) > tol) {
+        fm = f(xm, bounds);
+        if(fm > 0) {
+            xr = xm;
+            fr = fm;
+        }
+        else {
+            xl = xm;
+            fl = fm;
+        }
+        xm = 0.5*(xl+xr);
         count++;
     }
     cout << "Converged after " << count << " iterations." << endl;
-    return x0;
+    return xm;
 }
 
 int main() {
@@ -77,7 +87,7 @@ int main() {
 
     // initial guesses
     double y = bounds.y_left; // this must remain true, u(0) = 0
-    double z = secant(0, 10, rk4_integrate, bounds, 1e-6);
+    double z = bisect(0, 10, rk4_integrate, bounds, 1e-6);
 
     cout << "z(0) = " << z << endl;
 

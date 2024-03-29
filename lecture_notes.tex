@@ -1291,4 +1291,138 @@ RK4 might not be so bad as long as the dynamical time is long compared to the
 timescales we integrate over.  Choosing the correct method is in part a question
 of knowing \textit{what about the system you actually care about}.  There is no
 silver bullet in numerical integration.
+
+\subsection{Boundary Value Problems}
+From time to time, we might find ourselves faced with a different kind of
+differential equation problem (har har).  Rather than solving an ODE with the
+values specified at some point and evolving it forward in time, we may instead
+have an ODE with specific values given at certain points.  This problem might
+look a bit like this: 
+
+\begin{equation}
+    \frac{d^2 u}{d x^2} = f\left(u, \frac{du}{dx}\right)
+\end{equation}
+
+To solve this, we have conditions that must be satisfied called \textit{Boundary
+conditions}.  These are typically given at $x=0$ and $x=1$, since we can always
+scale the problem to fit these limits (think of changing a unit system, for
+example).
+
+Unlike with an IVP, where we need the value of $u$ and $u'$ at $t=0$, there are
+actually many different boundaries for a BVP.  For both the left side and the
+right side, we can potentially have either $u$, $u'$, or both specified.  These
+are often referred to in the literature as \textit{Dirichlet} boundary
+conditions when we have $u(0)$ and $u(1)$, \textit{Neumann} boundary conditions when we
+have $u'(0)$ and $u'(1)$, and \textit{Cauchy} when both are specified.  As you might
+imagine, if we have a mix, this is referred to as a mixed boundary condition.
+We may also have an eigenvalue up in the mix, which can select from many
+possible solutions.  We'll keep things simple and focus on just plain BVPs,
+since the methods for solving them are essentially the same as for eigenvalue
+problems.
+
+Let's consider a slightly different problem than the usual harmonic oscillator
+we've seen before.  The regular SHO is a homogeneous ODE, and so it has a
+trivial solution where $x=0$ everywhere.  Let's play with this equation instead:
+
+\begin{equation}
+    \frac{d^2 u}{dx^2} = -\frac{\pi^2}{4}(u + 1)
+\end{equation}
+
+This thing also has analytic solutions, which look like:
+\begin{equation}
+    u(x) = a\sin\left(\frac{\pi x}{2}\right) + b\cos\left(\frac{\pi x}{2}\right)
+    -1
+\end{equation}
+
+where $a$ and $b$ are constants that depend on the boundary value.  Let's see if
+we can figure out how to solve this thing.  If we were solving an initial value
+problem, we would probably want to split this second-order ODE into two coupled
+first-order ODEs:
+\begin{equation}
+    \begin{aligned}
+        \frac{dy}{dx} &= z \\
+        \frac{dz}{dx} &= -\frac{\pi^2}{4}(y+1) \\
+    \end{aligned}
+\end{equation}
+
+If this was an IVP, all I would need would be the values of $y(0)$ and $z(0)$,
+and I could integrate forward.  But what if, instead, I have $y(0)$ and $y(1)$
+(Dirichlet boundary conditions).  I don't know the initial value of $z(0)$, so I
+can't just integrate forward like I normally would for an IVP.  Or can I?
+
+Let's try and solve for these boundary conditions: $u(0) = 0$ and $u(1) = 1$.
+If I had some way of guessing the correct value of $z(0)$ that would give
+$u(1)=1$, I would be golden.  Maybe guessing is in fact a way forward?  Let's
+see how far that can get us.
+
+\begin{demo}[boundary.cpp]
+    Try different guesses for $z_0$ to see how the solutions behave.  Let
+    everyone try different numbers until we converge towards a solution.
+\end{demo}
+
+What does that exercise seem like to you?  If you thought root finding, you'd be
+right.  What we were trying to do was find some value of $z(0)= z_0$ such that when
+we solved the IVP with $y(0)=0$ and $z(0)=z_0$, the value of $y(1)=1$ when the
+integration reaches $x=1$.  Remember that root-finding is the process of finding
+when some function $f(\alpha) = 0$.  In our case, we have something that looks
+like this:
+
+\begin{equation}
+    f(\alpha) = \mathrm{solve\_ivp}(y_0=0,z_0=\alpha) - y(1)
+\end{equation}
+
+All we need to do then is feed this into our root finder, and away we go.  So,
+let's combine the bisection method for root finding with the 4th-order RK
+method.  This process of guessing a set of initial conditions, solving an IVP
+with those ICs, and then root-finding the error relative to the second boundary
+condition is called the \textit{shooting method}.  It's like we're shooting
+artillery at a target.  The first few shots miss, but each time we dial in the
+elevation and/or the powder charge to eventually land right on target (our
+second boundary).
+
+\begin{demo}[shooting\_bisect.cpp]
+    Outline the code for using bisection to solve the problem.  Check that it
+    works, and that it's more expensive the smaller the error tolerance is.
+\end{demo}
+
+We know that bisection's fast, but it's not the fastest to converge.  Since we
+don't have an analytic function for:
+\begin{equation}
+    \frac{d}{d\alpha}f(\alpha) = \frac{d}{d\alpha} \mathrm{solve\_ivp}(y_0=0,z_0=\alpha) 
+\end{equation}
+
+We probably can't throw Newton's method at this.  We can, however, try using the
+secant method, where we estimate that derivative as:
+\begin{equation}
+    \frac{d}{d\alpha}f(\alpha) = f(\alpha_{1})\frac{\alpha_{1} -
+    \alpha_{0}}{f(\alpha_1)-f(\alpha_0)}
+\end{equation}
+
+Let's see how much faster this is:
+\begin{demo}[shooting.cpp]
+    Show that this method converges in 1 iteration.  Change the bounds and show
+    that the number of iterations doesn't change.  Then do the same thing for
+    the tolerance.
+\end{demo}
+
+How can this thing always be converging in 1 iteration?  That seems too good to
+be true?  Well, the shooting method with secant root finding will
+\textit{always} converge to the exact solution (within machine precision) in a
+single iteration when one condition: that the ODE is a linear one.  Linear ODEs
+look like this:
+
+\begin{equation}
+    u'' + a(x)u' + b(x)u = c(x)
+\end{equation}
+
+A huge swath of ODEs that you might encounter are linear, and they all have the
+nice property of superposition: any solution $u(x)$ can be composed by the
+linear combination of:
+
+\begin{equation}
+    u(x) = Au_{\alpha_0}(x) + Bu_{\alpha_1}(x)
+\end{equation}
+
+With the secant method, we've exactly determined the values of $A$ and $B$ for
+our two initial guesses that will give $u(1) = 1$!
 \end{document}
