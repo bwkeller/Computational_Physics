@@ -1,4 +1,4 @@
-all: euler.out euler_converge.out picard.out picard_converge.out pred_corr.out pc_converge.out rk4.out rk4_converge.out rk2.out rk2_converge.out orbits.out rk4_energy.out ec_energy.out kdk_energy.out time_reverse.out
+all: euler.out euler_converge.out picard.out picard_converge.out pred_corr.out pc_converge.out rk4.out rk4_converge.out rk2.out rk2_converge.out orbits.out rk4_energy.out ec_energy.out kdk_energy.out time_reverse.out shooting.out hand_shooting.out
 	echo "Building all examples"
 
 euler.out: euler.cpp
@@ -45,3 +45,9 @@ kdk_energy.out: kdk_energy.cpp
 
 time_reverse.out: time_reverse.cpp
 	g++ -O3 -o time_reverse.out time_reverse.cpp
+
+shooting.out: shooting.cpp
+	g++ -O3 -o shooting.out shooting.cpp
+
+hand_shooting.out: hand_shooting.cpp
+	g++ -O3 -o hand_shooting.out hand_shooting.cpp
