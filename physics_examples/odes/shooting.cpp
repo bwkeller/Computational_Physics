@@ -4,6 +4,14 @@
 
 using namespace std;
 
+struct bvp
+{
+    double dx;
+    double x_left;
+    double y_left;
+    double x_right;
+    double y_right;
+};
 
 double analytic(double x) {
     return cos(M_PI*x/2) + 2*sin(M_PI*x/2) - 1;
@@ -30,30 +38,24 @@ void rk4_step(double *y, double *z, double dx) {
     *y += (dx/6)*(yk1+2*yk2+2*yk3+yk4);
 }
 
-double rk4_integrate(double zguess) {
-    // Boundary Conditions
-    double x_left = 0;
-    double y_left = 0;
-    double x_right = 1;
-    double y_right = 1;
+double rk4_integrate(double zguess, bvp bounds) {
 
-    double y = y_left; // this must remain true, u(0) = 0
+    double y = bounds.y_left; // this must remain true, u(0) = 0
     double z = zguess;
 
-    double dx=0.01; // Step size
 
-    for(double x=x_left;x<=x_right;x+=dx) {
-        rk4_step(&y, &z, dx);
+    for(double x=bounds.x_left;x<=bounds.x_right;x+=bounds.dx) {
+        rk4_step(&y, &z, bounds.dx);
     }
-    return y-y_right;
+    return y-bounds.y_right;
 }
 
-double secant(double x0, double x1, double (*f)(double), double tol) {
+double secant(double x0, double x1, double (*f)(double, bvp), bvp bounds, double tol) {
     int count=0;
     double x_old;
-    while(abs(f(x0)) > tol) {
+    while(abs(f(x0, bounds)) > tol) {
         x_old = x0;
-        x0 -= f(x0)*(x0-x1)/(f(x0)-f(x1));
+        x0 -= f(x0, bounds)*(x0-x1)/(f(x0, bounds)-f(x1, bounds));
         x1 = x_old;
         count++;
     }
@@ -62,22 +64,25 @@ double secant(double x0, double x1, double (*f)(double), double tol) {
 }
 
 int main() {
+    bvp bounds;
     // Boundary Conditions
-    double x_left = 0;
-    double y_left = 0;
-    double x_right = 1;
-    double y_right = 1;
+    bounds.x_left = 0;
+    bounds.y_left = 0;
+    bounds.x_right = 1;
+    bounds.y_right = 1;
+    bounds.dx=0.01; // Step size
 
     ofstream outfile;
     outfile.open("shooting.txt");
 
     // initial guesses
-    double y = y_left; // this must remain true, u(0) = 0
-    double z = secant(0, 3, rk4_integrate, 1e-6);
+    double y = bounds.y_left; // this must remain true, u(0) = 0
+    double z = secant(0, 3, rk4_integrate, bounds, 1e-6);
 
-    double dx=0.01; // Step size
-    for(double x=x_left;x<=x_right;x+=dx) {
-        rk4_step(&y, &z, dx);
+    cout << "z(0) = " << z << endl;
+
+    for(double x=bounds.x_left;x<=bounds.x_right;x+=bounds.dx) {
+        rk4_step(&y, &z, bounds.dx);
         outfile << x << " " << analytic(x) << " " << y << endl;
     }
     outfile.close();
