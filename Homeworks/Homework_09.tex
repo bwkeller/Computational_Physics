@@ -1,0 +1,54 @@
+\documentclass[11pt]{article}
+%\voffset -.5in \hoffset -.5in \textheight 9.9in \textwidth 6.4in
+\usepackage{geometry,url}
+\geometry{body={7in,9.3in}, centering}
+\pagestyle{empty}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\begin{document}
+\begin{center}
+\textbf{\Large Homework 9}\\
+\textbf{Due: April 6, 2024}\\
+\end{center}
+\section*{Instructions}
+Please write your code on \texttt{solid.memgalsim.space}, and store your results
+in the \texttt{PHYS4420} directory in your home directory.  Make a new directory
+in there, called \texttt{HW9}, and store each question as a separate
+\texttt{question\_NUM.cpp} file.  For the questions not involving just code,
+please send me a PDF of your answers.
+
+
+\section*{Questions}
+\begin{enumerate}
+    \item (10 points)  We examined 4 explicit methods for integrating ODEs:
+        Euler's method, Predictor-Corrector, 2nd-order Runge-Kutta, and
+        4th-order Runge-Kutta.  If we are integrating an equation that looks
+        like:
+        $$ u''(x) = f(x) $$
+        and the cost for computing $f(x)$ is much larger than any of the other
+        individual pieces of work done for a single step, what is the typical
+        cost per step for each of these methods?  If you want to reduce the
+        error on the result by a factor of $\sim 5$, how much longer will the
+        result take to compute for each of the above methods? Calculate this
+        with the assumption that the cost is just:
+        $$ C = N(f)$$
+        where $N(f)$ is the number of times $f(x)$ is evaluated.  
+    \item (15 points) Using the Hamiltonian for the simple harmonic oscillator,
+        where 
+        $$q' = p; \qquad p' = -q$$
+        verify that the Kick-Drift-Kick form of the Leapfrog/Verlet integrator
+        is symplectic \textit{(hint: find the determinant of the update
+        matrix)}.
+    \item (25 points) You're an artillery officer in some forgotten war, and you
+        must strike an enemy bunker 10km distant, and 100m higher than your
+        current position.  You have total control of the angle your cannon fires
+        at, as well as the velocity that the shell leaves the barrel.  If the
+        $5$ kg cannonball experiences the normal acceleration due to gravity, as well
+        an aerodynamic drag force given by:
+        $$F_d = (0.08\;\mathrm{kg/m}) v^2 $$
+        Use the shooting method to determine the initial velocity and angle
+        required to fire the cannon and hit your target.
+        
+\end{enumerate}
+\end{document}
