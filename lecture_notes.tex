@@ -1425,4 +1425,38 @@ linear combination of:
 
 With the secant method, we've exactly determined the values of $A$ and $B$ for
 our two initial guesses that will give $u(1) = 1$!
+
+\section{Monte Carlo Methods}
+All of the techniques we've seen so far are designed for human use.  Newton's
+method for root finding was first published (in some form) in 1669.  Simpson's
+rule was actually derived before Thomas Simpson was even born, by Johannes
+Kepler in 1615.  Euler's method was published first in 1768.  The Monte Carlo
+method is the first numerical method we're going to study that was created with
+mechanical calculation in mind.  
+
+In 1945, the first general-purpose (Turing complete) electronic, digital
+computer ever built.  It was originally intended for calculating artillery
+firing solutions (similar to the problem you solved in Homework 9).  This
+machine, ENIAC, ended up primarily being used to calculate reaction rates and
+scattering processes in the (then hypothetical) thermonuclear bomb.  In 1946,
+Stanislaw Ulam (who has the dubious distinction, along with the strange little
+man Edward Teller, of being the father of the Hydrogen Bomb) proposed using
+random numbers to simulate random-ish processes, like the scattering of neutrons
+passing through a solid.  2 years later, John von Neumann and Nicholas
+Metropolis programmed ENIAC to use this method to simulate said hydrogen bomb.
+It's name, by the suggestion of Metropolis, was the \textit{Monte
+Carlo method}, which was mostly a dunk on Ulam, who had a gambling-addicted
+uncle who borrowed his money because he ``just had to go to Monte Carlo''
+(that's a direct quote from an article Metropolis wrote on it).
+
+Monte Carlo methods are powerful in part because they are relatively stupid.
+They rely on the brute force that computers provide to smash their way towards a
+solution without too much cleverness (though a little bit of cleverness can make
+them \textit{much} more effective).  To use them, we first need to learn how to
+work with random numbers in C++.
+
+\begin{demo}[random.cpp]
+    Do a live-coding demo of how we work with random numbers.
+\end{demo}
+
 \end{document}
