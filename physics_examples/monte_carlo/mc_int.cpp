@@ -20,7 +20,7 @@ double mc_int(double a, double b, double (*f)(double), int N) {
         randx = (b-a)*((float) rand())/RAND_MAX + a;  // We need random numbers between a and b
         result += f(randx);
     }
-    return result/N;
+    return (b-a)*result/N;
 }
 
 int main()
