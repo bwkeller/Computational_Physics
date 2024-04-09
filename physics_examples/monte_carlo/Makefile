@@ -1,4 +1,4 @@
-default: random.out mc_int.out mc_converge.out pi.out dimensionality.out converge.out
+default: random.out mc_int.out mc_converge.out pi.out dimensionality.out converge.out metropolis.out
 
 random.out: random.cpp
 	g++ random.cpp -o random.out
@@ -17,3 +17,6 @@ dimensionality.out: dimensionality.cpp
 
 converge.out: converge.cpp
 	g++ converge.cpp -o converge.out
+
+metropolis.out: metropolis.cpp
+	g++ metropolis.cpp -o metropolis.out
