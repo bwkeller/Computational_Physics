@@ -26,8 +26,7 @@ double metropolis_step(double x, double (*f)(double), double step_size) {
     }
 }
 
-double metropolis_iterate(double x, double (*f)(double), double step_size, int N_steps) { 
-    double sum=f(x);
+void metropolis_iterate(double x, double (*f)(double), double step_size, int N_steps) { 
     int n_accept=0; 
     double x_new;
     ofstream outfile;
@@ -39,18 +38,14 @@ double metropolis_iterate(double x, double (*f)(double), double step_size, int N
         }
         outfile << x << endl;
         x = x_new;
-        sum += f(x);
     }
     cout << "Accepted " << n_accept << " trials" << endl;
     outfile.close();
-    return sum/N_steps;
 }
 
 int main()
 {
     srand(time(NULL));
-    cout << metropolis_iterate(0, truefunc, 3, 1e5) << endl;
-    cout << truenorm() << endl;
-    cout << truenorm()/metropolis_iterate(0, truefunc, 3, 1e5) << endl;
+    metropolis_iterate(0, truefunc, 1, 1e5);
     return 0;
 }
