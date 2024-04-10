@@ -1459,4 +1459,137 @@ work with random numbers in C++.
     Do a live-coding demo of how we work with random numbers.
 \end{demo}
 
+\begin{demo}[pi.cpp]
+    Do a live-coding demo of how we can find $\pi$ with a Monte-Carlo Method.
+\end{demo}
+
+\begin{demo}[mc\_int.cpp]
+    Show how we can integrate any arbitrary function with MC integration.
+\end{demo}
+
+\begin{demo}[dimensionality.cpp]
+    Demonstrate the ``curse of dimensionality''
+\end{demo}
+
+\begin{demo}[converge.cpp]
+    Show how the MC method outperforms quadrature with high dimensionality.
+\end{demo}
+
+\subsection{Markov Chains and the Metropolis Algorithm}
+We can easily draw random numbers from a uniform distribution using the built-in
+\texttt{rand()} function in C/C++, but what if we want random numbers from a
+different distribution?  Worse yet, what if we don't fully know that
+distribution, but instead only know that probabilities from it are proportional
+to some function?
+
+\begin{equation}
+    p(\vec x) \propto \pi(\vec x)
+\end{equation}
+
+To actually be a PDF, $\pi(\vec x)$ needs to be normalized:
+
+\begin{equation}
+    p(\vec x) = \frac{\pi(\vec x)}{\int_D \pi(\vec x) d\vec x}
+\end{equation}
+
+If the domain $D$ has high dimensionality, this will become a nightmare to
+integrate with quadrature, as we demonstrated before.  But at the same time,
+Monte-Carlo integration of it will still converge slowly.  Perhapse there is a
+way to draw random numbers from this distribution \textit{without} knowing the
+normalizing constant?
+
+It turns out there indeed is!  The way is to use a \textit{Markov Chain}.  A
+Markov chain is a series of ``states'', with transitions between them governed
+by some probability.  We can construct one using the \textit{Metropolis
+algorithm}, and when we're done, we will have an algorithm for generating
+numbers from any arbitrary distribution with $p(x)\propto\pi(x)$.  
+
+The basic idea is heavily inspired by statistical mechanics, and it looks like
+this: if $p(x)\propto\pi(x)$, then a system in equilibrium will have no net
+``flux'' of states:
+\begin{equation}
+    \begin{aligned}
+        p(x_0)p_{trans}(x_0 \rightarrow x_1) &= p(x_1)p_{trans}(x_1 \rightarrow
+        x_0) \\
+        \pi(x_0)p_{trans}(x_0 \rightarrow x_1) &= \pi(x_1)p_{trans}(x_1 \rightarrow
+        x_0) \\
+    \end{aligned}
+\end{equation}
+
+This means that the probability of the system jumping from state $x_0$ to $x_1$
+doesn't depend on the normalizing constant!  It is just given as:
+\begin{equation}
+    p_{trans}(x_0 \rightarrow x_1) = \frac{\pi(x_1)}{\pi(x_0)}
+\end{equation}
+
+This lets us build a beautiful, simple algorithm, the \textit{Metropolis}
+algorithm, for drawing random numbers from some distribution:
+
+\begin{enumerate}
+    \item Pick some state $\vec x_0$
+    \item Draw a random vector $\vec \alpha$ with each element uniformly
+        distributed between $[0,1]$, and generate a new trial state,
+        $\vec x_{trial} = \vec x_i + h(2\vec\alpha -1)$
+    \item Calculate $R=\pi(x_{trial})/\pi(x_i)$
+    \item Draw a new random number, $\beta$, between $[0,1]$.  If $R>\beta$,
+        accept the trial, setting $x_{i+1} = x_{trial}$.  Otherwise, reject it
+        and set $x_{i+1} = x_i$
+\end{enumerate}
+
+That's it! The set of all the values in this chain will follow the true PDF
+$p(x)$ \textit{even though we don't know it's normalization!} Let's see it in
+action.  We'll evaluate a PDF that's the sum of three Gaussians:
+
+\begin{equation}
+    \pi(x) = 6\exp\left(-4(x+4)^2\right) + 2\exp\left(-0.2(x+1)^2\right) + \exp\left(-2(x-5)^2\right)
+\end{equation}
+
+\begin{demo}[metropolis.cpp]
+    Live-code the metropolis algorithm, show it works.
+\end{demo}
+
+One trick we can use with this is to introduce \textit{importance sampling}.
+This can significantly improve the accuracy of a Monte-Carlo integration.
+Let's say we have a function that grows steeply, say for example:
+
+\begin{equation}
+    f(x) = x^{20}
+\end{equation}
+
+The integral of this will of course be:
+\begin{equation}
+    I = \int_a^b f(x) dx = \frac{b^{21}}{21} - \frac{a^{21}}{21} \approx
+    \frac{b^{21}}{21}
+\end{equation}
+
+If $b>a$, since the exponent is so large.  This means the integral depends
+almost exclusively on points near $b$, not $a$.  So what we can do to improve
+our integral is to draw points \textit{near} $b$.  This is equivalent to
+transforming our integral into something nearly constant.  If we pick a function
+$p(x)$ such that:
+
+\begin{equation}
+    \int_a^b p(x)dx  = 1
+\end{equation}
+
+and
+
+\begin{equation}
+    p(x)f(x) \approx const
+\end{equation}
+
+Then our standard Monte-Carlo integration can be replaced with:
+
+\begin{equation}
+    I = \int_a^b f(x) dx = \int_a^b \frac{f(x)}{p(x)} (p(x) dx) \approx
+    \frac{1}{N} \sum_i^{N} \frac{f(x_i)}{p(x_i)}
+\end{equation}
+
+Where each $x_i$ is drawn from $p(x)$.  This method is called \textit{importance
+sampling}, and it is a powerful way to improve the convergence of Monte Carlo
+Integration.
+
+\begin{demo}[importance.cpp]
+    Show how importance sampling works.
+\end{demo}
 \end{document}
