@@ -10,7 +10,10 @@ def truenorm():
     return np.sqrt(np.pi)*(6/np.sqrt(4) + 2/np.sqrt(0.2) + 1/np.sqrt(2))
 
 if __name__ == "__main__":
-    data = np.loadtxt("metropolis.txt")
     plt.plot(np.linspace(-10,10, 200), truefunc(np.linspace(-10,10, 200))/truenorm())
-    plt.hist(data, bins=100, density=True, label='Metropolis Sample')
+    try:
+        data = np.loadtxt("metropolis.txt")
+        plt.hist(data, bins=100, density=True, label='Metropolis Sample')
+    except:
+        pass
     plt.show()

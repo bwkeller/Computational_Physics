@@ -1,4 +1,4 @@
-default: random.out mc_int.out mc_converge.out pi.out dimensionality.out converge.out metropolis.out
+default: random.out mc_int.out mc_converge.out pi.out dimensionality.out converge.out metropolis.out importance.out
 
 random.out: random.cpp
 	g++ random.cpp -o random.out
@@ -20,3 +20,6 @@ converge.out: converge.cpp
 
 metropolis.out: metropolis.cpp
 	g++ metropolis.cpp -o metropolis.out
+
+importance.out: importance.cpp
+	g++ importance.cpp -o importance.out
