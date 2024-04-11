@@ -1459,17 +1459,69 @@ work with random numbers in C++.
     Do a live-coding demo of how we work with random numbers.
 \end{demo}
 
+The simplest example of how we can use randomness to solve problems is with
+Monte Carlo integration to solve for the value of $\pi$.  If we enclose a
+quadrant of a circle with radius $L$ in a square with side length $L$, the area
+of the circle $A_C$ and the square $A_S$ will be:
+
+\begin{equation}
+    A_C = \frac{\pi}{4}L^2 \qquad A_S = L^2
+\end{equation}
+
+respectively.  Therefore, the ratio of these two values is simply $\pi/4$.  If
+we draw two random numbers $x,y$ each between 0 and $L$, the probability that
+this random point will fall within the circle will be:
+
+\begin{equation}
+    P[\sqrt{x^2+y^2} <= L] = \frac{A_C}{A_S} = \frac{\pi}{4}
+\end{equation}
+
+Therefore, the expectation value for the fraction of points within this quadrant
+should be $\pi/4$.  Let's see if this works!
+
 \begin{demo}[pi.cpp]
     Do a live-coding demo of how we can find $\pi$ with a Monte-Carlo Method.
 \end{demo}
+
+It turns out that we can integrate \textit{any} function simply using this Monte
+Carlo method:
+
+\begin{equation}
+    I = \int_a^b f(x) dx \approx \frac{b-a}{N} \sum_{i=0}^N f(x_i)
+\end{equation}
 
 \begin{demo}[mc\_int.cpp]
     Show how we can integrate any arbitrary function with MC integration.
 \end{demo}
 
+You can see though that the accuracy here isn't very good. Let's see how it
+converges...
+
+\begin{demo}[mc\_converge.cpp]
+    Show how we can integrate any arbitrary function with MC integration.
+\end{demo}
+
+You can see here that the convergence actually isn't very good!  In fact, the
+convergence here is a purely statistical one: we no longer have a truncation
+error, but instead are dealing with how likely it is that we've reasonably
+sampled our function.  This means that the convergence generally will scale as
+$\mathcal{O}(N^{1/2})$, worse than even the lowest-order quadrature rule.
+
+This situation seems to suggest that Monte Carlo integration is nothing more
+than a fun trick, but not a practical way of integrating a function.  However,
+there is one class of problems where Monte Carlo integration is the
+\textit{only} tractable way of solving the integral:  when the dimensionality of
+the problem becomes large.  
+
 \begin{demo}[dimensionality.cpp]
     Demonstrate the ``curse of dimensionality''
 \end{demo}
+
+When we have a high-dimensional integral, as we often do in statistical and
+quantum mechanics, a quadrature method that converges as $\mathcal{O}(N^a)$ in
+one dimension will instead converge as $\mathcal{O}(N^{a/D})$, where $D$ is the
+dimensionality of the problem.  As long as $a/D<<1/2$, then Monte Carlo
+integration will vastly outperform numerical quadrature.
 
 \begin{demo}[converge.cpp]
     Show how the MC method outperforms quadrature with high dimensionality.
@@ -1592,4 +1644,13 @@ Integration.
 \begin{demo}[importance.cpp]
     Show how importance sampling works.
 \end{demo}
+
+\section{Partial Differential Equations}
+We've now seen methods for estimating derivatives and integrals, finding roots,
+and solving ODEs.  We now turn to the most interesting, and often the most
+challenging, computational problem class in numerical physics: \textit{Partial
+Differential Equations}.  There is a nearly infinite variety of potential PDEs
+that can be studied, but in the context of physics, three broad classes show up
+again and again.  In general
+
 \end{document}
