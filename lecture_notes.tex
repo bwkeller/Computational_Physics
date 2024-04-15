@@ -1651,6 +1651,51 @@ and solving ODEs.  We now turn to the most interesting, and often the most
 challenging, computational problem class in numerical physics: \textit{Partial
 Differential Equations}.  There is a nearly infinite variety of potential PDEs
 that can be studied, but in the context of physics, three broad classes show up
-again and again.  In general
+again and again: \textit{Hyperbolic}, \textit{Parabolic}, and \textit{Elliptic}
+equations.  Why they are called this is something for a math course, but we can
+understand the key distinctions that we would care about by looking at some key
+examples.
+
+Each of these classes of PDEs each have examples that you are likely
+already familiar with.  The canonical hyperbolic PDE is the wave equation:
+
+\begin{equation}
+    \frac{\partial^2 \phi}{\partial t^2} = c^2 \nabla^2 \phi
+\end{equation}
+
+The key feature of hyperbolic PDEs is that the solution propagates at a finite,
+real speed (in the case of the wave equation, that speed is $c$).  A
+perturbation made at some point will only change the value of $\phi$ within a
+radius of $ct$: everywhere else the values are unchanged. The canonical
+example of a parabolic PDE is the heat equation:
+
+\begin{equation}
+    \frac{\partial \phi}{\partial t} = k \nabla^2 \phi
+\end{equation}
+
+Unlike with hyperbolic PDEs, parabolic systems transmit information
+instantaneously: a perturbation made at some point will instantaneously change
+the value of $\phi$ everywhere.  Naturally, this is unphysical, but if the speed
+of a signal propagating is sufficiently fast, we can treat it as effectively
+infinite.
+
+The final class is the elliptical PDE, and the canonical example here is
+Poisson's equation:
+
+\begin{equation}
+    \nabla^2 \phi = f
+\end{equation}
+
+Notice that this has no time dependence: the values of $\phi$ are set purely by
+the boundary conditions and the source function $f$.  This too implies an
+infinite speed at which information is propagated.
+
+\subsection{Hyperbolic PDE: The Linear Advection Equation}
+The simplest example of a hyperbolic PDE, and one that is very easy to reason
+about, is the linear advection equation:
+
+\begin{equation}
+    \frac{\partial a}{\partial t} = u\frac{\partial a}{\partial x}
+\end{equation}
 
 \end{document}
