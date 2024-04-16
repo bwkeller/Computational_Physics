@@ -1698,4 +1698,16 @@ about, is the linear advection equation:
     \frac{\partial a}{\partial t} = u\frac{\partial a}{\partial x}
 \end{equation}
 
+This equation is really quite easy to understand, since it's just describing
+some quantity moving through space at a constant velocity $u$.
+
+\begin{demo}[ftcs.cpp]
+    Live code the ftcs method.  Show that for a top-hat IC, it gives horrendous
+    results.
+\end{demo}
+
+So why is this thing unstable?  To understand that, let's use a method we're
+familiar with in constructing numerical schemes: truncation analysis.  This is
+just a fancy way of saying ``look at the results of a Taylor expansion''.
+
 \end{document}

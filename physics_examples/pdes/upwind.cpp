@@ -54,8 +54,8 @@ int main()
     int N=256;
     double grid[N];
     double IC[N];
-    sine_grid(grid, N);
-    sine_grid(IC, N);
+    init_grid(grid, N);
+    init_grid(IC, N);
     upwind(grid, N, 1, 0.01, 1);
     ofstream outfile;
     outfile.open("upwind.txt");
