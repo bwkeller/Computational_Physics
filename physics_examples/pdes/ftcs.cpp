@@ -16,6 +16,23 @@ void init_grid(double *grid, int N) {
     }
 }
 
+void sine_grid(double *grid, int N) {
+    for(int i=0;i<N;i++) {
+        grid[i] = sin((20*M_PI*i)/N);
+    }
+}
+
+void peak(double *grid, int N) {
+    for(int i=0;i<N;i++) {
+        if(i > N/4 && i<N/2)
+            grid[i] = (2*(float) (i))/N - 0.5;
+        else if (i>=N/2 && i < 3*N/4)
+            grid[i] = 2-(2*(float) i)/N - 0.5;
+        else
+            grid[i] = 0;
+    }
+}
+
 void ftcs(double *grid, int N, double u, double C, double periods) {
     double dt = C/(N*u);
     double tf = periods/u;
@@ -41,9 +58,9 @@ int main()
     int N=256;
     double grid[N];
     double IC[N];
-    init_grid(grid, N);
-    init_grid(IC, N);
-    ftcs(grid, N, 1, 0.01, 0.1);
+    peak(grid, N);
+    peak(IC, N);
+    ftcs(grid, N, 1, 0.1, 50);
     ofstream outfile;
     outfile.open("ftcs.txt");
     for(int i=0;i<N;i++) {
