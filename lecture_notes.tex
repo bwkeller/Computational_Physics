@@ -1695,11 +1695,36 @@ The simplest example of a hyperbolic PDE, and one that is very easy to reason
 about, is the linear advection equation:
 
 \begin{equation}
-    \frac{\partial a}{\partial t} = u\frac{\partial a}{\partial x}
+    \frac{\partial a}{\partial t} = -u\frac{\partial a}{\partial x}
 \end{equation}
 
 This equation is really quite easy to understand, since it's just describing
 some quantity moving through space at a constant velocity $u$.
+
+We will need to discretize this in both space and time to come up with a
+numerical solution to the PDE.  Let's build one using the Euler method for time,
+and the central difference method for space:
+
+\begin{equation}
+    \frac{a_i^{n+1} - a_i^n}{\Delta t} = -u\frac{a_{i+1}^n - a_{i-1}^n}{2\Delta
+    x}
+\end{equation}
+
+Here I'm using subscripts to represent steps in space, and superscripts to
+represent steps in time.  If we re-arrange this, we can find the equation
+telling us the new value of $a$ at spatial point $i$:
+
+\begin{equation}
+    a_i^{n+1} = a_i^n - \frac{u\Delta t}{2\Delta x}(a_{i+1}^n - a_{i-1}^n)
+\end{equation}
+
+We can replace the coefficient in front of the spatial update with a single
+dimensionless number, called the \textit{Courant number}.  Generally, this value
+must be $C<1$ for a scheme to be stable.
+
+\begin{equation}
+    C = \frac{u\Delta t}{\Delta x}
+\end{equation}
 
 \begin{demo}[ftcs.cpp]
     Live code the ftcs method.  Show that for a top-hat IC, it gives horrendous
@@ -1709,5 +1734,92 @@ some quantity moving through space at a constant velocity $u$.
 So why is this thing unstable?  To understand that, let's use a method we're
 familiar with in constructing numerical schemes: truncation analysis.  This is
 just a fancy way of saying ``look at the results of a Taylor expansion''.
+
+Let's start by expanding our quantity in space and time:
+
+\begin{equation}
+    a_{i\pm 1}^n = a_i^n \pm \frac{\partial a}{\partial x}\Delta x +
+    \frac{1}{2}\frac{\partial^2 a}{\partial x^2}\Delta x^2 + \mathcal{O}{(\Delta x^3)}
+\end{equation}
+
+\begin{equation}
+    a_{i}^{n+1} = a_i^n + \frac{\partial a}{\partial t}\Delta t +
+    \frac{1}{2}\frac{\partial^2 a}{\partial t^2}\Delta t^2 + \mathcal{O}{(\Delta t^3)}
+\end{equation}
+
+We can replace the second time derivative there with our original PDE (bear with
+me, it will be come clear why we are doing this soon).
+
+\begin{equation}
+    \begin{aligned}
+        \frac{\partial a}{\partial t} &= -u\frac{\partial a}{\partial x} \\
+        \frac{\partial^2 a}{\partial t^2} &= -u\frac{\partial}{\partial t}\frac{\partial a}{\partial x} \\
+        \frac{\partial^2 a}{\partial t^2} &= -u\frac{\partial}{\partial x}\frac{\partial a}{\partial t} \\
+        \frac{\partial^2 a}{\partial t^2} &= u^2\frac{\partial^2 a}{\partial x^2} \\
+    \end{aligned}
+\end{equation}
+
+Plugging this into our Taylor expansion in time gives us:
+\begin{equation}
+    a_{i}^{n+1} = a_i^n + \frac{\partial a}{\partial t}\Delta t +
+    \frac{1}{2}u^2\frac{\partial^2 a}{\partial x^2}\Delta t^2 + \mathcal{O}{(\Delta t^3)}
+\end{equation}
+
+If we plug these into our FTCS update scheme, we get:
+
+\begin{equation}
+    \begin{aligned}
+        a_i^{n+1} &= a_i^n - \frac{C}{2}(a_{i+1}^n - a_{i-1}^n) \\
+        a_i^n + \frac{\partial a}{\partial t}\Delta t +
+        \frac{1}{2}u^2\frac{\partial^2 a}{\partial x^2}\Delta t^2 +
+        \mathcal{O}{(\Delta t^3)} &= a_i^n - \frac{C}{2}\left(a_i^n + \frac{\partial a}{\partial x}\Delta x +
+    \frac{1}{2}\frac{\partial^2 a}{\partial x^2}\Delta x^2  - a_i^n + \frac{\partial a}{\partial x}\Delta x -
+    \frac{1}{2}\frac{\partial^2 a}{\partial x^2}\Delta x^2 + \mathcal{O}{(\Delta
+        x^3)}\right) \\
+        \frac{\partial a}{\partial t}\Delta t +
+        \frac{1}{2}u^2\frac{\partial^2 a}{\partial x^2}\Delta t^2 +
+        \mathcal{O}{(\Delta t^3)} &= - \frac{u\Delta t}{\Delta x}\left(\frac{\partial a}{\partial
+        x}\Delta x\right) + \mathcal{O}(\Delta x^3)\\
+        \frac{\partial a}{\partial t} = -u\frac{\partial a}{\partial
+        x} - \frac{1}{2}u^2\frac{\partial^2 a}{\partial x^2} \Delta t +
+        \mathcal{O}(\Delta t^2) + \mathcal{O}(\Delta x^3)
+    \end{aligned}
+\end{equation}
+
+Notice that very last term before we truncate with big-o notation.  What does it
+look like?  It looks like diffusion, but with a \textit{negative} diffusion
+coefficient: this is antidiffusion, and it is always unstable (\textit{think
+about what diffusion does: it smooths out discontinuities.  Antidiffusion
+sharpens them}).
+
+To do better, we're actually going to do worse: we will use a different,
+lower-order method for constructing the spatial derivative.  This time, we will
+use a backward difference \textit{so long as the backwards difference is
+relative to the direction of the velocity} $u$.  This gives us a new scheme that
+looks like:
+
+\begin{equation}
+    a_i^{n+1} = a_i^n - C(a_i^n - a_{i-1}^n)
+\end{equation}
+
+Let's see how this works.
+
+\begin{demo}[ftcs.cpp]
+    Live code the ftcs method.  Show that for a top-hat IC, it gives horrendous
+    results.
+\end{demo}
+
+\subsection{Parabolic PDE: The Diffusion Equation}
+Ironically, the FTCS scheme works great for diffusion!  This time, though, we
+have a second derivative:
+
+\begin{equation}
+    \frac{\partial a}{\partial t} = k\frac{\partial^2 a}{\partial x^2}
+\end{equation}
+
+So our central difference will be slightly different:
+\begin{equation}
+    \frac{a_i^{n+1} - a_i^n}{\Delta t} = k \frac{a_{i+1}^n - 2a_i^n + a_{i-1}^n}{\Delta x^2}
+\end{equation}
 
 \end{document}
