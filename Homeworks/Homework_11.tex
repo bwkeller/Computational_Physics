@@ -1,0 +1,54 @@
+\documentclass[11pt]{article}
+%\voffset -.5in \hoffset -.5in \textheight 9.9in \textwidth 6.4in
+\usepackage{geometry,url}
+\geometry{body={7in,9.3in}, centering}
+\pagestyle{empty}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\begin{document}
+\begin{center}
+\textbf{\Large Homework 11}\\
+\textbf{Due: April 24, 2024}\\
+\end{center}
+\section*{Instructions}
+Please write your code on \texttt{solid.memgalsim.space}, and store your results
+in the \texttt{PHYS4420} directory in your home directory.  Make a new directory
+in there, called \texttt{HW11}, and store each question as a separate
+\texttt{question\_NUM.cpp} file.  For the questions not involving just code,
+please send me a PDF of your answers.
+
+
+\section*{Questions}
+\begin{enumerate}
+    \item (10 points) Write a program that generates random numbers from the
+        following distribution:
+        $$ P(x) \propto \exp\left(-\frac{\ln(x)^2}{2}\right) $$
+        using the Metropolis algorithm.  Verify that this looks like a
+        log-normal distribution by drawing a few thousand points and plotting a
+        histogram of them.
+
+    \item (20 points) Prove, using truncation analysis, that the forward
+        upwinding scheme for linear advection:
+        $$ a_i^{n+1} = a_i^n - \frac{u\Delta t}{\Delta x}\left(a_i^n -
+        a_{i-1}^n\right)$$
+        is stable (in other words, the first omitted term looks like diffusion
+        rather than antidiffusion).
+
+    \item (20 points) The linear advection equation is a very simplified
+        approximation of the equations for fluid flows.  Naturally, real fluids
+        do not flow at a constant velocity.  Relaxing the assumption of constant
+        velocity gives us \textit{Inviscid Burgers' Equation}, where the quantity being
+        advected is the velocity $u$:
+        $$ \frac{\partial u}{\partial t} = -u\frac{\partial u}{\partial x} $$
+        To examine the behaviour of the Inviscid Burgers' Equation, write a code
+        to solve it using the forward upwinding scheme.  Test this code on an
+        initial condition on a domain of $x=[0,1]$, containing the IC velocity
+        field
+        $$ u(x) = 0.1\sin(2\pi x) + 0.2 $$
+        and with a grid size of $N=256$.  Using a timestep of $\Delta t=0.01$,
+        see what happens to this system when it is evolved to $t=0.1$, $t=0.2$,
+        and $t=0.5$.  What is the behaviour you are seeing, and why is it
+        occurring?
+\end{enumerate}
+\end{document}
