@@ -1,0 +1,55 @@
+\documentclass[11pt]{article}
+%\voffset -.5in \hoffset -.5in \textheight 9.9in \textwidth 6.4in
+\usepackage{geometry,url}
+\geometry{body={7in,9.3in}, centering}
+\pagestyle{empty}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\begin{document}
+\begin{center}
+\textbf{\Large Homework 12}\\
+\textbf{Due: May 1, 2024}\\
+\end{center}
+\section*{Instructions}
+Please write your code on \texttt{solid.memgalsim.space}, and store your results
+in the \texttt{PHYS4420} directory in your home directory.  Make a new directory
+in there, called \texttt{HW12}, and store each question as a separate
+\texttt{question\_NUM.cpp} file.  For the questions not involving just code,
+please send me a PDF of your answers.
+
+This homework relies on PDE solvers that we worked on in class.  If you need to
+reference the example code, it can be found here: \\
+\url{https://github.com/bwkeller/Computational_Physics/blob/main/physics_examples/}
+
+\section*{Questions}
+\begin{enumerate}
+    \item (35 points) Let's solve the Poisson equation for the gravitational
+        potential:
+        $$ \nabla^2 \Phi = 4\pi G \rho $$
+        We will do this in 1 dimension, and use a domain of $[0,1]$ with
+        boundary conditions $\Phi =0$.  Let's put in a density such that:
+        $$ 4\pi G\rho =\begin{cases}
+            1 & \text{if } 0.4 < x < 0.6 \\
+            0 & \text{otherwise}
+        \end{cases} $$ 
+        Use Gauss-Seidel relaxation to solve this problem on a $N=256$ point grid, and with
+        $10^5$ iterations.  What does the potential look like near $x=0.5$?  What
+        does it look as you move towards $x=0$ and $x=1$?  You should be able to
+        slightly modify the \texttt{poisson.cpp} example code in the
+        \texttt{physics\_examples\/pdes} directory of the course github.
+    \item (10 points) Take your solution from the previous problem, but now modify the
+        density to have a hollow center:
+        $$ 4\pi G\rho =\begin{cases}
+            1 & \text{if } 0.3 < x < 0.35 \\
+            1 & \text{if } 0.7 < x < 0.75 \\
+            0 & \text{otherwise}
+        \end{cases} $$ 
+        What does the potential look like now?  Is it doing what you would
+        expect in the hollow center (\textit{Hint: remember Newton's shell
+        theorem})?  Why do you think it looks like that?
+    \item (5 points) What topic did you enjoy most in this course?  Which topic
+        do you wish we had covered or done in more detail?
+\end{enumerate}
+\end{document}
